@@ -1,0 +1,2 @@
+﻿IF EXISTS (SELECT * FROM ::fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL)) EXEC sp_dropextendedproperty '__BuildMaster_Ver'
+IF OBJECT_ID('__BuildMaster_ExecSql') IS NOT NULL  DROP PROCEDURE __BuildMaster_ExecSql
