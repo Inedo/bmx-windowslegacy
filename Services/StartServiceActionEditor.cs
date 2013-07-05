@@ -119,29 +119,31 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         private string[] GetServiceNames()
         {
-            return new ServicesHelper((IPersistedObjectExecuter)Util.Agents.CreateAgentFromId(this.ServerId)).GetServiceNames();
-        }
-        private void StartServiceActionEditor_ValidateBeforeCreate(object sender, ValidationEventArgs<ActionBase> e)
-        {
-            ServicesHelper sc;
             try
             {
-                sc = new ServicesHelper((IPersistedObjectExecuter)Util.Agents.CreateAgentFromId(this.ServerId));
+                using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
+                {
+                    var remote = agent.GetService<IRemoteMethodExecuter>();
+                    return remote.InvokeFunc(ServicesHelper.GetServiceNames);
+                }
             }
             catch
             {
-                e.Message =
-                    "There was an error communicating with the selected server.";
-                e.ValidLevel = ValidationLevels.Error;
-                return;
+                return new string[0];
             }
-
-            if (!sc.IsAvailable())
+        }
+        private void StartServiceActionEditor_ValidateBeforeCreate(object sender, ValidationEventArgs<ActionBase> e)
+        {
+            using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
             {
-                e.Message =
-                    "This action may not be created on the specified server because a " +
-                    "connection cannot be established with the server's services.";
-                e.ValidLevel = ValidationLevels.Error;
+                var remote = agent.GetService<IRemoteMethodExecuter>();
+                if (!remote.InvokeFunc(ServicesHelper.IsAvailable))
+                {
+                    e.Message =
+                        "This action may not be created on the specified server because a " +
+                        "connection cannot be established with the server's services.";
+                    e.ValidLevel = ValidationLevels.Error;
+                }
             }
         }
         private void StartServiceActionEditor_ValidateBeforeSave(object sender, ValidationEventArgs<ActionBase> e)

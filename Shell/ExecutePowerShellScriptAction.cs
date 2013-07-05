@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Management.Automation.Host;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
-using System.Management.Automation;
-using System.Collections.ObjectModel;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
@@ -72,8 +70,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
             if (this.LogResults && !string.IsNullOrEmpty(results))
             {
-                foreach (var item in Util.Persistence.DeSerializeToStringArray(results))
-                    LogInformation(item);
+                foreach (var item in Util.Persistence.DeserializeToStringArray(results))
+                    this.LogInformation(item);
             }
         }
 
@@ -102,7 +100,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                         if (string.IsNullOrEmpty(this.Script))
                             throw new InvalidOperationException("No script file has been specified.");
 
-                        string scriptFilePath = Path.Combine(this.RemoteConfiguration.SourceDirectory, this.Script);
+                        string scriptFilePath = Path.Combine(this.Context.SourceDirectory, this.Script);
                         if (!File.Exists(scriptFilePath))
                         {
                             LogError(string.Format("The script file '{0}' either does not exist or BuildMaster does not have permission to access it.", this.Script));

@@ -24,7 +24,7 @@
     <SccProvider>
     </SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <PublishUrl>http://localhost/Windows/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -39,6 +39,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,11 +62,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BuildMaster.Web.Controls">
-      <HintPath>packages\Inedo.BuildMaster.SDK.3.5\lib\net20\BuildMaster.Web.Controls.dll</HintPath>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.0\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BuildMasterCore">
-      <HintPath>packages\Inedo.BuildMaster.SDK.3.5\lib\net20\BuildMasterCore.dll</HintPath>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.0\lib\net40\BuildMasterCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
@@ -73,7 +74,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="InedoLib">
-      <HintPath>packages\Inedo.BuildMaster.SDK.3.5\lib\net20\InedoLib.dll</HintPath>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.0\lib\net40\InedoLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -102,7 +103,6 @@
     </Compile>
     <Compile Include="IIS\StartupIisAppAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\BatchScriptProvider.cs" />
     <Compile Include="Services\StopServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -122,13 +122,6 @@
     <Compile Include="Shell\ExecutePowerShellScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="SqlServer\ProviderScripts.cs" />
-    <Compile Include="SqlServer\SqlServerChangeScript.cs" />
-    <Compile Include="SqlServer\SqlServerDatabaseProvider.cs" />
-    <Compile Include="SqlServer\SqlServerDatabaseProviderEditor.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SqlServer\SqlSplitter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -158,22 +151,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SqlServer\ProviderScripts\Initialize.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SqlServer\ProviderScripts\ReInitFrom1.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="windows-logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SqlServer\sql-logo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SqlServer\ProviderScripts\ReInitFrom2.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
