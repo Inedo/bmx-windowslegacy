@@ -26,10 +26,10 @@ namespace Inedo.BuildMasterExtensions.Windows.SqlServer
 DECLARE @ver SQL_VARIANT
 IF OBJECT_ID('__BuildMaster_DbSchemaChanges') IS NULL OR OBJECT_ID('fn_listextendedproperty') IS NULL
   SET @ver = 0
-ELSE IF OBJECT_ID('__BuildMaster_ExecSql') IS NULL AND NOT EXISTS (SELECT * FROM ::fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL))
+ELSE IF OBJECT_ID('__BuildMaster_ExecSql') IS NULL AND NOT EXISTS (SELECT * FROM fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL))
   SET @ver = 3
 ELSE 
-  SET @ver = COALESCE((SELECT [value] FROM ::fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL)),1)
+  SET @ver = COALESCE((SELECT [value] FROM fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL)),1)
 
 SELECT @ver")
                 .Rows[0][0].ToString());
