@@ -24,7 +24,7 @@ namespace Inedo.BuildMasterExtensions.Windows.SqlServer
         {
             int ver = int.Parse(ExecuteDataTable(@"
 DECLARE @ver SQL_VARIANT
-IF OBJECT_ID('__BuildMaster_DbSchemaChanges') IS NULL 
+IF OBJECT_ID('__BuildMaster_DbSchemaChanges') IS NULL OR OBJECT_ID('fn_listextendedproperty') IS NULL
   SET @ver = 0
 ELSE IF OBJECT_ID('__BuildMaster_ExecSql') IS NULL AND NOT EXISTS (SELECT * FROM ::fn_listextendedproperty ('__BuildMaster_Ver',NULL,NULL,NULL,NULL,NULL,NULL))
   SET @ver = 3
