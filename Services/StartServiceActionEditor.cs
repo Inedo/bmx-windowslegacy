@@ -142,7 +142,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                     e.Message =
                         "This action may not be created on the specified server because a " +
                         "connection cannot be established with the server's services.";
-                    e.ValidLevel = ValidationLevels.Error;
+                    e.ValidLevel = ValidationLevel.Error;
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         {
             if (string.IsNullOrEmpty(((StartServiceAction)e.Extension).ServiceName))
             {
-                e.ValidLevel = ValidationLevels.Error;
+                e.ValidLevel = ValidationLevel.Error;
                 e.Message = "Service Name must be specified.";
             }
         }

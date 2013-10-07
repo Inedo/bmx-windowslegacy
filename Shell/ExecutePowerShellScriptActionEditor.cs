@@ -161,7 +161,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             {
                 if (string.IsNullOrEmpty(this.txtScriptFile.Text))
                 {
-                    e.ValidLevel = ValidationLevels.Error;
+                    e.ValidLevel = ValidationLevel.Error;
                     e.Message = "Script file to execute must be specified.";
                 }
             }
