@@ -11,7 +11,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     /// <summary>
     /// Custom editor for the execute PowerShell script action.
     /// </summary>
-    public sealed class ExecutePowerShellScriptActionEditor : ActionEditorBase
+    internal sealed class ExecutePowerShellScriptActionEditor : ActionEditorBase
     {
         private CheckBox chkUseScriptFile;
         private SourceControlFileFolderPicker txtScriptFile;
@@ -161,7 +161,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             {
                 if (string.IsNullOrEmpty(this.txtScriptFile.Text))
                 {
-                    e.ValidLevel = ValidationLevels.Error;
+                    e.ValidLevel = ValidationLevel.Error;
                     e.Message = "Script file to execute must be specified.";
                 }
             }

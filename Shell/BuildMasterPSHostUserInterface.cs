@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
-using Inedo.BuildMaster.Diagnostics;
 using Inedo.BuildMaster.Extensibility.Actions;
+using Inedo.Diagnostics;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
@@ -23,7 +23,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         {
         }
 
-        private void OnLogReceived(string message, MessageLevels messageLevel) 
+        private void OnLogReceived(string message, MessageLevel messageLevel) 
         {
             if (this.LogReceived != null)
                 LogReceived(this, new LogReceivedEventArgs(message, messageLevel));
@@ -66,27 +66,27 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            OnLogReceived(value, MessageLevels.Information);
+            OnLogReceived(value, MessageLevel.Information);
         }
 
         public override void Write(string value)
         {
-            OnLogReceived(value, MessageLevels.Information);
+            OnLogReceived(value, MessageLevel.Information);
         }
 
         public override void WriteDebugLine(string message)
         {
-            OnLogReceived(message, MessageLevels.Debug);
+            OnLogReceived(message, MessageLevel.Debug);
         }
 
         public override void WriteErrorLine(string value)
         {
-            OnLogReceived(value, MessageLevels.Error);
+            OnLogReceived(value, MessageLevel.Error);
         }
 
         public override void WriteLine(string value)
         {
-            OnLogReceived(value, MessageLevels.Information);
+            OnLogReceived(value, MessageLevel.Information);
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
@@ -95,12 +95,12 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
         public override void WriteVerboseLine(string message)
         {
-            OnLogReceived(message, MessageLevels.Debug);
+            OnLogReceived(message, MessageLevel.Debug);
         }
 
         public override void WriteWarningLine(string message)
         {
-            OnLogReceived(String.Format("WARNING: {0}", message), MessageLevels.Information);
+            OnLogReceived(String.Format("WARNING: {0}", message), MessageLevel.Information);
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using System.Web.UI.WebControls;
+﻿using System.Linq;
+using System.Web.UI.WebControls;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
-using Inedo.Linq;
 using Inedo.Web.Controls;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
@@ -56,8 +56,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             string[] names;
             try
             {
-                var proxy = new ProxiedUtil((IPersistedObjectExecuter)Util.Agents.CreateAgentFromId(this.ServerId));
-                names = proxy.GetAppPoolNames();
+                using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
+                {
+                    var remote = agent.GetService<IRemoteMethodExecuter>();
+                    names = remote.InvokeFunc(ProxiedUtil.GetAppPoolNames);
+                }
             }
             catch
             {

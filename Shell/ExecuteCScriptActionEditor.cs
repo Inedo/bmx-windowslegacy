@@ -1,37 +1,55 @@
-﻿using System;
-using Inedo.BuildMaster.Extensibility.Actions;
+﻿using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls;
+using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
-    /// <summary>
-    /// Represents an editor for the Execute CScript action
-    /// </summary>
-    public class ExecuteCScriptActionEditor : OldActionEditorBase
+    internal sealed class ExecuteCScriptActionEditor : ActionEditorBase
     {
-        SourceControlFileFolderPicker ctlScriptPath = null;
-        ValidatingTextBox txtArguments = null;
+        private SourceControlFileFolderPicker ctlScriptPath;
+        private ValidatingTextBox txtArguments;
 
         public override bool DisplaySourceDirectory { get { return true; } }
 
-        protected override void OnInit(EventArgs e)
+        public override void BindToForm(ActionBase extension)
         {
-            ctlScriptPath = new SourceControlFileFolderPicker();
-            ctlScriptPath.ServerId = ServerId;
-            ctlScriptPath.Required = true;
+            this.EnsureChildControls();
 
-            txtArguments = new ValidatingTextBox() { Width = 300 };
+            var execCScript = (ExecuteCScriptAction)extension;
+            this.ctlScriptPath.Text = execCScript.ScriptPath;
+            this.txtArguments.Text = execCScript.Arguments;
+        }
 
-            CUtil.Add(
-                this,
+        public override ActionBase CreateFromForm()
+        {
+            this.EnsureChildControls();
+
+            return new ExecuteCScriptAction
+            {
+                ScriptPath = this.ctlScriptPath.Text,
+                Arguments = this.txtArguments.Text
+            };
+        }
+
+        protected override void CreateChildControls()
+        {
+            this.ctlScriptPath = new SourceControlFileFolderPicker
+            {
+                ServerId = this.ServerId,
+                Required = true
+            };
+
+            this.txtArguments = new ValidatingTextBox { Width = 300 };
+
+            this.Controls.Add(
                 new FormFieldGroup(
                     "Script Path",
-                    "The path to a script that cscript.exe should run (generally .vbs or .js)",
+                    "The path to a script that cscript.exe should run (generally .vbs or .js).",
                     false,
                     new StandardFormField(
                         "Script Path:",
-                        ctlScriptPath
+                        this.ctlScriptPath
                     )
                 ),
                 new FormFieldGroup(
@@ -40,31 +58,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                     true,
                     new StandardFormField(
                         "Arguments:",
-                        txtArguments
+                        this.txtArguments
                     )
                 )
             );
-
-
-            base.OnInit(e);
-        }
-
-        public override void BindActionToForm(ActionBase action)
-        {
-            ExecuteCScriptAction execCScript = (ExecuteCScriptAction)action;
-
-            ctlScriptPath.Text = execCScript.ScriptPath;
-            txtArguments.Text = execCScript.Arguments;
-        }
-
-        public override ActionBase CreateActionFromForm()
-        {
-            ExecuteCScriptAction execCScript = new ExecuteCScriptAction();
-
-            execCScript.ScriptPath = ctlScriptPath.Text;
-            execCScript.Arguments = txtArguments.Text;
-
-            return execCScript;
         }
     }
 }
