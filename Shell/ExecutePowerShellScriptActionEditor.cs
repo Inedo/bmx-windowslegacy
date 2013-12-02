@@ -120,7 +120,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                     ),
                 new FormFieldGroup(
                     "Variables",
-                    "Optionally provide variables to pass to the script in the form VariableName=VariableValue (one per line).",
+                    "Optionally provide variables to pass to the script in the form VariableName=VariableValue (one per line). " +
+                    "To access custom variables, use surrounding percent symbols. (e.g. MyVariable=%MyCustomVariable%)",
                     false,
                     new StandardFormField(
                         "Variables (one per line):",
