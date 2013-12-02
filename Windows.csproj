@@ -163,6 +163,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
-if exist $(SolutionDir) $(SolutionDir)..\zip -j $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.dll</PostBuildEvent>
+if exist $(SolutionDir) $(SolutionDir)..\zip -j $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.dll
+if exist $(TargetDir)Microsoft.Web.Administration.dll del $(TargetDir)Microsoft.Web.Administration.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>
