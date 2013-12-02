@@ -26,7 +26,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         /// </summary>
         public ExecutePowerShellScriptActionEditor()
         {
-            this.ValidateBeforeSave += ExecutePowerShellScriptActionEditor_ValidateBeforeSave;
+            this.ValidateBeforeSave += this.ExecutePowerShellScriptActionEditor_ValidateBeforeSave;
         }
 
         public override void BindToForm(ActionBase extension)
@@ -98,14 +98,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
             this.chkLogResults = new CheckBox()
             {
-                Text = "Log Script Output"
+                Text = "Log Script Output",
+                Checked = true
             };
 
             this.sffScriptFile = new StandardFormField("Script File:", this.txtScriptFile);
 
             this.sffScript = new StandardFormField("Script:", this.txtScript);
 
-            CUtil.Add(this,
+            this.Controls.Add(
                 new FormFieldGroup(
                     "Script",
                     "Provide a script to execute either as a file on the remote server or entered directly into the action editor.",

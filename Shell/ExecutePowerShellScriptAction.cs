@@ -24,6 +24,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         /// </summary>
         public ExecutePowerShellScriptAction()
         {
+            this.LogResults = true;
         }
 
         /// <summary>
