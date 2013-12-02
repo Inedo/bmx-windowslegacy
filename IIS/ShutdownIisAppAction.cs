@@ -10,8 +10,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     /// </summary>
     [ActionProperties(
         "Stop IIS App Pool",
-        "Stops an application pool in IIS.",
-        "Windows")]
+        "Stops an application pool in IIS.")]
+    [Tag("windows")]
+    [Tag("iis")]
     [CustomEditor(typeof(StartStopIISAppActionEditor<ShutdownIisAppAction>))]
     public sealed class ShutdownIisAppAction : RemoteActionBase, IIISAppPoolAction
     {

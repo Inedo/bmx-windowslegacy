@@ -14,8 +14,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     /// </summary>
     [ActionProperties(
         "Execute PowerShell Script",
-        "Runs a PowerShell script on the target server.",
-        "Windows")]
+        "Runs a PowerShell script on the target server.")]
+    [Tag("windows")]
     [CustomEditor(typeof(ExecutePowerShellScriptActionEditor))]
     public sealed class ExecutePowerShellScriptAction : RemoteActionBase
     {

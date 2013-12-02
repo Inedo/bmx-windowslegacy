@@ -13,8 +13,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     /// </summary>
     [ActionProperties(
         "Execute CScript",
-        "Runs a script using cscript.exe on the target server.",
-        "Windows")]
+        "Runs a script using cscript.exe on the target server.")]
+    [Tag("windows")]
     [CustomEditor(typeof(ExecuteCScriptActionEditor))]
     public sealed class ExecuteCScriptAction : AgentBasedActionBase
     {

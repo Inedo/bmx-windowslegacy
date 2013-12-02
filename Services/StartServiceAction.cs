@@ -12,8 +12,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     /// </summary>
     [ActionProperties(
         "Start Service",
-        "Starts a Windows Service.",
-        "Windows")]
+        "Starts a Windows Service.")]
+    [Tag("windows")]
     [CustomEditor(typeof(StartServiceActionEditor))]
     public sealed class StartServiceAction : RemoteActionBase
     {

@@ -10,8 +10,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     /// </summary>
     [ActionProperties(
         "Start IIS App Pool",
-        "Starts an application pool in IIS.",
-        "Windows")]
+        "Starts an application pool in IIS.")]
+    [Tag("windows")]
+    [Tag("iis")]
     [CustomEditor(typeof(StartStopIISAppActionEditor<StartupIisAppAction>))]
     public sealed class StartupIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
