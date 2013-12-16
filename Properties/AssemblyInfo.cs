@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Inedo.BuildMaster.Extensibility;
 
 [assembly: AssemblyTitle("Windows")]
-[assembly: AssemblyDescription("Contains actions to interact with Windows features, including IIS and Services; also includes a provider for Microsoft SQL Server.")]
+[assembly: AssemblyDescription("Contains actions to interact with Windows features, including IIS and Services.")]
 
 [assembly: ComVisible(false)]
 [assembly: AssemblyCompany("Inedo, LLC")]
