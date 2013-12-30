@@ -92,6 +92,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIS\CreateIisAppPoolAction.cs" />
+    <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IIS\CreateIisWebSiteAction.cs" />
+    <Compile Include="IIS\CreateIisWebSiteActionEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="IIS\IIISAppPoolAction.cs" />
     <Compile Include="IIS\IIS6Util.cs" />
     <Compile Include="IIS\IIS7Util.cs" />

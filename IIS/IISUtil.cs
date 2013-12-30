@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
+using Microsoft.Web.Administration;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
@@ -61,6 +63,24 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         /// </summary>
         /// <param name="name">Name of the AppPool to stop.</param>
         public abstract void StopAppPool(string name);
+        /// <summary>
+        /// Creates a new application pool.
+        /// </summary>
+        /// <param name="name">The name of the application pool.</param>
+        /// <param name="user">The user account of the application pool.</param>
+        /// <param name="password">The password for the specified user account.</param>
+        /// <param name="integratedMode">If true, sets the app pool mode to integrated.</param>
+        /// <param name="managedRuntimeVersion">The version of .NET hosting the app pool.</param>
+        public abstract void CreateAppPool(string name, string user, string password, bool integratedMode, string managedRuntimeVersion);
+        /// <summary>
+        /// Creates a new website.
+        /// </summary>
+        /// <param name="name">The name of the website.</param>
+        /// <param name="path">The physical path of the website.</param>
+        /// <param name="appPool">The name of the application pool.</param>
+        /// <param name="https">Binds to HTTPS instead of HTTP</param>
+        /// <param name="binding">The port, hostname, and IP of the website.</param>
+        public abstract void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding);
 
         /// <summary>
         /// Returns a new instances of the newest supported IIS management interface.
@@ -85,6 +105,56 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             }
 
             throw new InvalidOperationException("IIS 6 or newer management interfaces are not present on the system.");
+        }
+
+        protected void AddUserToGroup(string userName)
+        {
+            if (!userName.Contains("\\"))
+                userName = Environment.MachineName + "\\" + userName;
+
+            var AD = new DirectoryEntry("WinNT://" + Environment.MachineName + ",computer");
+            var userPath = "WinNT://" + userName.Replace('\\', '/') + ",user";
+
+            DirectoryEntry group1 = null;
+            try
+            {
+                group1 = AD.Children.Find("IIS_WPG", "group");
+                if (group1 != null)
+                    group1.Invoke("Add", new object[] { userPath });
+            }
+            catch
+            {
+            }
+
+            DirectoryEntry group2 = null;
+            try
+            {
+                group2 = AD.Children.Find("IIS_IUSRS", "group");
+                if (group2 != null)
+                    group2.Invoke("Add", new object[] { userPath });
+            }
+            catch
+            {
+            }
+        }
+
+        internal class BindingInfo
+        {
+            public int Port { get; set; }
+            public string HostName { get; set; }
+            public string IPAddress { get; set; }
+
+            public BindingInfo(string hostName, int port, string ipAddress)
+            {
+                this.HostName = hostName;
+                this.IPAddress = string.IsNullOrEmpty(ipAddress) ? "*" : ipAddress;
+                this.Port = port;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0}:{1}:{2}", this.IPAddress, this.Port, this.HostName);
+            }
         }
     }
 }

@@ -57,6 +57,16 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 DoAppPoolAction(name, AppPoolCommands.StopAppPool);
             }
 
+            public override void CreateAppPool(string name, string user, string password, bool integratedMode, string managedRuntimeVersion)
+            {
+                throw new NotSupportedException();
+            }
+
+            public override void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding)
+            {
+                throw new NotSupportedException();
+            }
+
             /// <summary>
             /// Verifies that the required IIS6 interfaces are present.
             /// </summary>
