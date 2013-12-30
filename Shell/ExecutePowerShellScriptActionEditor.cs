@@ -17,6 +17,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         private SourceControlFileFolderPicker txtScriptFile;
         private TextBox txtScript;
         private TextBox txtVariables;
+        private TextBox txtParameters;
         private CheckBox chkLogResults;
         private StandardFormField sffScriptFile;
         private StandardFormField sffScript;
@@ -37,6 +38,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             this.chkUseScriptFile.Checked = action.IsScriptFile;
             this.chkLogResults.Checked = action.LogResults;
             this.txtVariables.Text = string.Join(Environment.NewLine, action.Variables ?? new string[0]);
+            this.txtParameters.Text = string.Join(Environment.NewLine, action.Parameters ?? new string[0]);
 
             if (action.IsScriptFile)
                 this.txtScriptFile.Text = Path.Combine(action.OverriddenSourceDirectory, action.Script ?? string.Empty);
@@ -51,7 +53,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             {
                 IsScriptFile = this.chkUseScriptFile.Checked,
                 LogResults = this.chkLogResults.Checked,
-                Variables = this.txtVariables.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+                Variables = this.txtVariables.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None),
+                Parameters = this.txtParameters.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None)
             };
 
             if (this.chkUseScriptFile.Checked)
@@ -96,6 +99,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                 Rows = 5
             };
 
+            this.txtParameters = new TextBox()
+            {
+                Width = 300,
+                TextMode = TextBoxMode.MultiLine,
+                Rows = 5
+            };
+
             this.chkLogResults = new CheckBox()
             {
                 Text = "Log Script Output",
@@ -119,9 +129,19 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                     this.sffScript
                     ),
                 new FormFieldGroup(
+                    "Parameters",
+                    "Optionally provide arguments declared in a Param() block to pass to the script in the form ParamName=ArgumentValue (one per line). " +
+                    "Switch parameters can be included by their name only (e.g. SwitchName) to evaluate to $true, or omitted to evaluate to $false. ",
+                    false,
+                    new StandardFormField(
+                        "Parameters (one per line):",
+                        this.txtParameters
+                        )
+                    ),
+                new FormFieldGroup(
                     "Variables",
-                    "Optionally provide variables to pass to the script in the form VariableName=VariableValue (one per line). " +
-                    "To access custom variables, use surrounding percent symbols. (e.g. MyVariable=%MyCustomVariable%)",
+                    "Optionally provide global variables to replace within the script in the form VariableName=VariableValue (one per line). " +
+                    "To access custom BuildMaster variables, use surrounding percent symbols. (e.g. MyVariable=%MyCustomVariable%)",
                     false,
                     new StandardFormField(
                         "Variables (one per line):",

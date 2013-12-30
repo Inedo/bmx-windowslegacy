@@ -48,6 +48,16 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         /// </remarks>
         [Persistent]
         public string[] Variables { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parameter name/value pairs to pass to the script.
+        /// </summary>
+        /// <remarks>
+        /// Each string should be of the form:
+        ///   ParamName=ParamValue
+        /// </remarks>
+        [Persistent]
+        public string[] Parameters { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether the results of the script should be logged.
         /// </summary>
@@ -78,7 +88,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-            var variables = ParseVariables();
+            var variables = ParseKeyValuePairsFromLines(this.Variables);
 
             var host = new BuildMasterPSHost();
             
@@ -114,6 +124,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                     {
                         ps.Commands.AddScript(this.Script);
                     }
+
+                    ps.AddParameters(ParseKeyValuePairsFromLines(this.Parameters));
 
                     // capture errors from "write-error" here since apparently a custom host cannot do this
                     ps.AddCommand("out-default");
@@ -151,44 +163,46 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             Log(e.LogLevel, e.Message);
         }
 
-        private Dictionary<string, string> ParseVariables()
+        private Dictionary<string, object> ParseKeyValuePairsFromLines(string[] lines)
         {
-            var variables = new Dictionary<string, string>();
+            var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            var rows = this.Variables ?? new string[0];
-            foreach (var row in rows)
+            var rows = lines ?? new string[0];
+            foreach (string row in rows)
             {
                 if (string.IsNullOrEmpty(row))
                     continue;
 
                 var pair = row.Split(new[] { '=' }, 2, StringSplitOptions.None);
-                if (pair.Length != 2)
-                    throw new InvalidDataException("Unable to parse variable definition: " + row);
+                if (pair.Length == 0)
+                    throw new InvalidDataException("Unable to parse variable or parameter definition: " + row);
 
                 string name = pair[0].TrimStart('$');
-                string value = pair[1];
 
-                if (name == String.Empty)
-                    throw new InvalidDataException("Unable to parse variable definition: " + row);
+                if (name == string.Empty)
+                    throw new InvalidDataException("Unable to parse variable or parameter definition: " + row);
 
-                if (value == String.Empty)
+                // key value pairs with no equals sign evaluate to a boolean true
+                object value = pair.Length == 2 ? pair[1] : (object)true;
+
+                if (string.Equals(value, string.Empty))
                 {
-                    LogDebug("Variable \"{0}\" has no value, skipping.");
+                    this.LogDebug("Variable or parameter \"{0}\" has no value, skipping.");
                     continue;
                 }
 
-                if (!variables.ContainsKey(name))
+                if (!result.ContainsKey(name))
                 {
-                    variables.Add(name, value);
+                    result.Add(name, value);
                 }
                 else
                 {
-                    LogDebug(String.Format("Variable \"{0}\" already declared, existing value will be overwritten.", name));
-                    variables[name] = value;
+                    this.LogDebug(string.Format("Variable or parameter \"{0}\" already declared, existing value will be overwritten.", name));
+                    result[name] = value;
                 }
             }
 
-            return variables;
+            return result;
         }
 
         private string GetScriptText()
