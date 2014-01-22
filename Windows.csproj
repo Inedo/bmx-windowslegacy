@@ -133,7 +133,6 @@
     <Compile Include="Shell\ExecuteCScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Shell\ExecutePowerShellScriptAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
