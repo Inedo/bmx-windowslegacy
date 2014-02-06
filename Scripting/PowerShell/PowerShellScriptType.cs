@@ -92,7 +92,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 
             var ps = System.Management.Automation.PowerShell.Create();
 
-            using (var reader = context.GetTextReader())
+            using (var reader = GetTextReader2(context))
             {
                 ps.AddScript(reader.ReadToEnd());
             }
@@ -104,6 +104,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                 ps.Runspace.SessionStateProxy.SetVariable(var.Key, var.Value);
 
             return new PowerShellScriptRunner(ps);
+        }
+
+        private static TextReader GetTextReader2(ScriptExecutionContext context)
+        {
+            if (string.IsNullOrWhiteSpace(context.FileName))
+                return context.GetTextReader();
+
+            var correctedPath = Path.Combine(context.WorkingDirectory ?? string.Empty, context.FileName);
+            return new StreamReader(new FileStream(correctedPath, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
         private IEnumerable<ParamInfo> ScrapeParameters(IEnumerable<PSToken> tokens)
