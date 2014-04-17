@@ -125,6 +125,10 @@
     </Compile>
     <Compile Include="Scripting\PowerShell\PowerShellScriptRunner.cs" />
     <Compile Include="Scripting\PowerShell\PowerShellScriptType.cs" />
+    <Compile Include="Services\InstallServiceAction.cs" />
+    <Compile Include="Services\InstallServiceActionEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Services\ServiceSelector.cs" />
     <Compile Include="Services\StopServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -135,6 +139,10 @@
     <Compile Include="Services\StopServiceAction.cs" />
     <Compile Include="Services\ServicesHelper.cs" />
     <Compile Include="Services\StartServiceAction.cs" />
+    <Compile Include="Services\UninstallServiceAction.cs" />
+    <Compile Include="Services\UninstallServiceActionEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Shell\ExecuteCScriptAction.cs" />
     <Compile Include="Shell\ExecuteCScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
