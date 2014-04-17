@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
+using Inedo.Diagnostics;
 using Microsoft.Web.Administration;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
@@ -44,9 +43,16 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 {
                     var pool = manager.ApplicationPools[name];
                     if (pool == null)
-                        throw new InvalidOperationException("Application pool not found.");
+                        throw new IISException("Application pool not found.");
 
-                    pool.Start();
+                    try
+                    {
+                        pool.Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new IISException("Could not start application pool: " + ex.Message, ex);
+                    }
                 }
             }
             /// <summary>
@@ -59,9 +65,23 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 {
                     var pool = manager.ApplicationPools[name];
                     if (pool == null)
-                        throw new InvalidOperationException("Application pool not found.");
+                        throw new IISException("Application pool not found.", MessageLevel.Warning);
 
-                    pool.Stop();
+                    try
+                    {
+                        pool.Stop();
+                    }
+                    catch (COMException ex)
+                    {
+                        if ((uint)ex.ErrorCode == 0x80070426)
+                            throw new IISException("Application pool is already stopped.", ex, MessageLevel.Information);
+                        else
+                            throw new IISException("Could not stop application pool: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new IISException("Could not stop application pool: " + ex.Message);
+                    }
                 }
             }
 

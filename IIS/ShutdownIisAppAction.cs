@@ -1,5 +1,6 @@
 using System.Threading;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
@@ -36,14 +37,22 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         protected override void Execute()
         {
             this.LogDebug("Stopping application pool {0}...", this.AppPool);
-            this.ExecuteRemoteCommand("stop");
-            this.LogInformation("{0} application pool stopped.", this.AppPool);
+            if (this.ExecuteRemoteCommand("stop") == Domains.YN.Yes)
+                this.LogInformation("{0} application pool stopped.", this.AppPool);
         }
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-            IISUtil.Instance.StopAppPool(this.AppPool);
-            Thread.Sleep(100);
-            return string.Empty;
+            try
+            {
+                IISUtil.Instance.StopAppPool(this.AppPool);
+                Thread.Sleep(100);
+                return Domains.YN.Yes;
+            }
+            catch (IISException ex)
+            {
+                this.Log(ex.LogLevel, ex.Message);
+                return Domains.YN.No;
+            }
         }
     }
 }

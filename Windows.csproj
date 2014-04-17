@@ -68,19 +68,19 @@
   <ItemGroup>
     <Reference Include="BuildMaster.Web.Controls">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BuildMasterCore">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\BuildMasterCore.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="InedoLib">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\InedoLib.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -110,6 +110,7 @@
     <Compile Include="IIS\IIISAppPoolAction.cs" />
     <Compile Include="IIS\IIS6Util.cs" />
     <Compile Include="IIS\IIS7Util.cs" />
+    <Compile Include="IIS\IISException.cs" />
     <Compile Include="IIS\IISUtil.cs" />
     <Compile Include="IIS\ProxiedUtil.cs" />
     <Compile Include="IIS\ShutdownIisAppAction.cs" />
