@@ -13,7 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     /// <summary>
     /// Custom editor for the <see cref="CreateIisAppPoolAction"/> class.
     /// </summary>
-    public sealed class CreateIisAppPoolActionEditor : ActionEditorBase
+    internal sealed class CreateIisAppPoolActionEditor : ActionEditorBase
     {
         private ValidatingTextBox txtName;
         private DropDownList ddlUser;
@@ -64,8 +64,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
         protected override void CreateChildControls()
         {
-            this.txtName = new ValidatingTextBox() { Width = 300, Required = true };
-            this.ddlUser = new DropDownList()
+            this.txtName = new ValidatingTextBox { Required = true };
+            this.ddlUser = new DropDownList
             {
                 Items =
                 {
@@ -76,10 +76,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            this.txtUser = new ValidatingTextBox() { Width = 300 };
-            this.txtPassword = new PasswordTextBox() { Width = 270 };
+            this.txtUser = new ValidatingTextBox();
+            this.txtPassword = new PasswordTextBox();
 
-            this.divUser = new Div() 
+            this.divUser = new Div
             { 
                 Controls = 
                 { 
@@ -89,7 +89,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 } 
             };
 
-            this.rblIntegrated = new RadioButtonList()
+            this.rblIntegrated = new RadioButtonList
             {
                 Items = 
                 { 
@@ -98,7 +98,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            this.ddlManagedRuntimeVersion = new DropDownList()
+            this.ddlManagedRuntimeVersion = new DropDownList
             {
                 Items =
                 {
@@ -108,29 +108,22 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             };
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Name",
-                    "The name of the application pool to create on the remote server.",
-                    false,
-                    new StandardFormField("Name:", this.txtName)
+                new SlimFormField(
+                    "Application pool name:",
+                    this.txtName
                 ),
-                new FormFieldGroup(
-                    "User Identity",
-                    "The user account that hosts the application pool.",
-                    false,
-                    new StandardFormField("User Identity:", this.ddlUser, this.divUser)
+                new SlimFormField(
+                    "User identity:",
+                    this.ddlUser,
+                    this.divUser
                 ),
-                new FormFieldGroup(
-                    "Managed Pipeline Mode",
-                    "Specify whether the application pool should run in Integrated Mode or Classic Mode.",
-                    false,
-                    new StandardFormField("", this.rblIntegrated)
+                new SlimFormField(
+                    "Managed pipeline mode:",
+                    this.rblIntegrated
                 ),
-                new FormFieldGroup(
-                    "Runtime Version",
-                    "Specify the version of .NET used by this application pool.",
-                    false,
-                    new StandardFormField("Runtime Version:", this.ddlManagedRuntimeVersion)
+                new SlimFormField(
+                    "Managed runtime version:",
+                    this.ddlManagedRuntimeVersion
                 )
             );
         }

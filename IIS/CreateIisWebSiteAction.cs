@@ -1,5 +1,5 @@
-﻿using System;
-using Inedo.BuildMaster;
+﻿using Inedo.BuildMaster;
+using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
@@ -49,53 +49,56 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public string IPAddress { get; set; }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        /// <remarks>
-        /// This should return a user-friendly string describing what the Action does
-        /// and the state of its important persistent properties.
-        /// </remarks>
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format(
-                "Create a new IIS web site \"{0}\" at the path \"{1}\" under the \"{2}\" application pool on port {3}.",
-                this.Name,
-                this.PhysicalPath,
-                this.ApplicationPool,
-                this.Port
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Create ",
+                    new Hilite(this.Name),
+                    " IIS Web Site"
+                ),
+                new LongActionDescription(
+                    "at ",
+                    new Hilite(this.PhysicalPath),
+                    "using the ",
+                    new Hilite(this.ApplicationPool),
+                    " application pool on port ",
+                    new Hilite(this.Port)
+                )
             );
         }
 
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-            this.LogInformation("Creating Web Site in IIS: \"{0}\"", this.Name);
             this.LogDebug("Physical Path: {0}", this.PhysicalPath);
             this.LogDebug("App Pool: {0}", this.ApplicationPool);
 
-            int? port = string.IsNullOrEmpty(this.Port) ? 80 : InedoLib.Util.Int.ParseN(this.Port);
-            if (port == null || port < 1)
-                throw new InvalidOperationException(string.Format("The specified port ({0}) does not resolve to an integer greater than 0.", port));
+            int port = string.IsNullOrEmpty(this.Port) ? 80 : InedoLib.Util.Int.ParseZ(this.Port);
+            if (port < 1 || port > ushort.MaxValue)
+            {
+                this.LogError("The specified port ({0}) does not resolve to a valid port number.", this.Port);
+                return Domains.YN.No;
+            }
 
-            this.LogDebug("Binding Info (IP:Port:Hostname): {0}", new IISUtil.BindingInfo(this.HostName, (int)port, this.IPAddress));
+            var bindingInfo = new IISUtil.BindingInfo(this.HostName, port, this.IPAddress);
+            this.LogDebug("Binding Info (IP:Port:Hostname): " + bindingInfo);
 
             IISUtil.Instance.CreateWebSite(
                 this.Name, 
                 this.PhysicalPath, 
                 this.ApplicationPool, 
-                (int)port == 443, 
-                new IISUtil.BindingInfo(this.HostName, (int)port, this.IPAddress)
+                port == 443, 
+                bindingInfo
             );
 
-            return null;
+            return Domains.YN.Yes;
         }
 
         protected override void Execute()
         {
-            this.ExecuteRemoteCommand(null);
+            this.LogDebug("Creating IIS web site {0}...", this.Name);
+            if (this.ExecuteRemoteCommand(null) == Domains.YN.Yes)
+                this.LogInformation("{0} web site created.", this.Name);
         }
     }
 }

@@ -17,26 +17,27 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     public sealed class StartupIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="StartupIisAppAction"/> class.
-        /// </summary>
-        public StartupIisAppAction()
-        {
-        }
-
-        /// <summary>
         /// Gets or sets the name of the application pool to start.
         /// </summary>
         [Persistent]
         public string AppPool { get; set; }
 
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format("Start '{0}'", this.AppPool);
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Start ",
+                    new Hilite(this.AppPool),
+                    " application pool"
+                )
+            );
         }
        
         protected override void Execute()
         {
+            this.LogDebug("Starting application pool {0}...", this.AppPool);
             this.ExecuteRemoteCommand("start");
+            this.LogInformation("{0} application pool started.", this.AppPool);
         }
         protected override string ProcessRemoteCommand(string name, string[] args)
         {

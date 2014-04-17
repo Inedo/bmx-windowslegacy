@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Web.UI.WebControls;
-using Inedo.BuildMaster;
-using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Extensibility.Agents;
+﻿using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
@@ -12,33 +8,14 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     internal sealed class StartStopIISAppActionEditor<TAction> : ActionEditorBase
         where TAction : ActionBase, IIISAppPoolAction, new()
     {
-        private DropDownList ddlAppPool;
-        private TextBox txtAppPool;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StartStopIISAppActionEditor{TAction}"/> class.
-        /// </summary>
-        public StartStopIISAppActionEditor()
-        {
-        }
+        private AppPoolSelector ddlAppPool;
 
         public override void BindToForm(ActionBase extension)
         {
             this.EnsureChildControls();
 
             var action = (TAction)extension;
-            if (!string.IsNullOrEmpty(action.AppPool))
-            {
-                if (this.ddlAppPool.Items.Cast<ListItem>().Any(a => a.Value == action.AppPool))
-                {
-                    this.ddlAppPool.SelectedValue = action.AppPool;
-                }
-                else
-                {
-                    this.ddlAppPool.SelectedValue = "<|OTHER|>";
-                    this.txtAppPool.Text = action.AppPool;
-                }
-            }
+            this.ddlAppPool.Value = action.AppPool;
         }
         public override ActionBase CreateFromForm()
         {
@@ -46,56 +23,23 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
             return new TAction
             {
-                AppPool = this.ddlAppPool.SelectedValue != "<|OTHER|>" ? this.ddlAppPool.SelectedValue : this.txtAppPool.Text
+                AppPool = this.ddlAppPool.Value
             };
         }
 
         protected override void CreateChildControls()
         {
-            this.txtAppPool = new TextBox { Width = 300 };
-            string[] names;
-            try
-            {
-                using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
+            this.ddlAppPool = new AppPoolSelector { ID = "ddlAppPool" };
+
+            var ctlValidator = new StyledCustomValidator();
+            ctlValidator.ServerValidate +=
+                (s, e) =>
                 {
-                    var remote = agent.GetService<IRemoteMethodExecuter>();
-                    names = remote.InvokeFunc(ProxiedUtil.GetAppPoolNames);
-                }
-            }
-            catch
-            {
-                names = new string[0];
-            }
-
-            this.ddlAppPool = new DropDownList { ID = "ddlAppPool" };
-            this.ddlAppPool
-                .Items
-                .AddRange(names.Select(n => new ListItem(n, n)).ToArray());
-
-            this.ddlAppPool.Items.Add(new ListItem("Other...", "<|OTHER|>"));
-
-            var ctlOtherAppPool = new StandardFormField(string.Empty, this.txtAppPool) { ID = "ctlOtherAppPool" };
+                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlAppPool.Value);
+                };
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Application Pool",
-                    "Select the name of the application pool.",
-                    true,
-                    new StandardFormField(
-                        "Application Pool:",
-                        this.ddlAppPool
-                    ),
-                    ctlOtherAppPool
-                ),
-                new RenderJQueryDocReadyDelegator(
-                    w =>
-                    {
-                        w.Write("$('#{0}').change(function() {{ if($('#{0}').val() == '<|OTHER|>') $('#{1}').show(); else $('#{1}').hide(); }}); $('#{0}').change();",
-                            this.ddlAppPool.ClientID,
-                            ctlOtherAppPool.ClientID
-                        );
-                    }
-                )
+                new SlimFormField("Application pool:", this.ddlAppPool, ctlValidator)
             );
         }
     }

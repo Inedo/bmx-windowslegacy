@@ -7,9 +7,6 @@ using Inedo.BuildMaster.Web;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    /// <summary>
-    /// An action that starts a Windows service.
-    /// </summary>
     [ActionProperties(
         "Start Service",
         "Starts a Windows Service.")]
@@ -22,20 +19,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         /// </summary>
         public StartServiceAction()
         {
-            WaitForStart = true;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return "Start '" + this.ServiceName + "' service"
-                + ((this.StartupArgs != null && this.StartupArgs.Length > 0) ? " Arguments: " + string.Join(" ", this.StartupArgs) : "")
-                + (this.WaitForStart ? " and wait until its status is \"Running\"" : "");
+            this.WaitForStart = true;
         }
 
         /// <summary>
@@ -71,24 +55,33 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         [Persistent]
         public bool TreatUnableToStartAsWarning { get; set; }
 
-        /// <summary>
-        /// This method is called to execute the Action.
-        /// </summary>
+        public override ActionDescription GetActionDescription()
+        {
+            var longDesc = new LongActionDescription();
+            if (this.StartupArgs != null && this.StartupArgs.Length > 0)
+            {
+                longDesc.AppendContent(
+                    "with arguments: ",
+                    new Hilite(string.Join(" ", this.StartupArgs))
+                );
+            }
+
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Start ",
+                    this.ServiceName,
+                    " Service"
+                ),
+                longDesc
+            );
+        }
+
         protected override void Execute()
         {
             this.LogInformation("Starting service {0}...", this.ServiceName);
             this.ExecuteRemoteCommand("start");
         }
 
-        /// <summary>
-        /// When implemented in a derived class, processes an arbitrary command
-        /// on the appropriate server.
-        /// </summary>
-        /// <param name="name">Name of command to process.</param>
-        /// <param name="args">Optional command arguments.</param>
-        /// <returns>
-        /// Result of the command.
-        /// </returns>
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
             using (var sc = new ServiceController(this.ServiceName))
@@ -121,7 +114,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                     {
                         sc.Refresh();
                         started = sc.Status == ServiceControllerStatus.Running;
-                        if (started) break;
+                        if (started)
+                            break;
+
                         Thread.Sleep(1000 * 3); // poll every 3 seconds
 
                         if (sc.Status == ServiceControllerStatus.Stopped)

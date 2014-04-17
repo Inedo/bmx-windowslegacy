@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Agents;
@@ -37,30 +36,26 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         [Persistent]
         public string Arguments { get; set; }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        /// <remarks>
-        /// This should return a user-friendly string describing what the Action does
-        /// and the state of its important persistent properties.
-        /// </remarks>
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            var buffer = new StringBuilder("Run ");
-            buffer.Append(this.ScriptPath);
-            if(!string.IsNullOrWhiteSpace(this.Arguments))
+            var longDesc = new LongActionDescription();
+            if (!string.IsNullOrWhiteSpace(this.Arguments))
             {
-                buffer.Append(' ');
-                buffer.Append(this.Arguments);
-                buffer.Append(' ');
+                longDesc.AppendContent(
+                    "with arguments: ",
+                    new Hilite(this.Arguments)
+                );
             }
 
-            buffer.Append("using cscript.exe");
-            return buffer.ToString();
-       }
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Run ",
+                    new DirectoryHilite(this.OverriddenSourceDirectory, this.ScriptPath),
+                    " using cscript.exe"
+                ),
+                longDesc
+            );
+        }
 
         /// <summary>
         /// Executes the action.
@@ -70,18 +65,19 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         /// </remarks>
         protected override void Execute()
         {
-            this.LogDebug("Executing CScript...");
+            this.LogDebug("Arguments: " + this.Arguments);
+            this.LogInformation("Executing CScript.exe {0}...", this.ScriptPath);
 
             var agent = this.Context.Agent.GetService<IRemoteMethodExecuter>();
             var systemPath = agent.InvokeFunc(Environment.GetFolderPath, Environment.SpecialFolder.System);
-            
-            var args = this.ScriptPath;
+
+            var args = "\"" + this.ScriptPath + "\"";
             if (!string.IsNullOrWhiteSpace(this.Arguments))
                 args += " " + this.Arguments;
 
             this.ExecuteCommandLine(Path.Combine(systemPath, "cscript.exe"), args, this.Context.SourceDirectory);
 
-            this.LogDebug("CScript execution complete.");
+            this.LogInformation("CScript execution complete.");
         }
     }
 }

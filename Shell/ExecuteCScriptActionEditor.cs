@@ -1,4 +1,5 @@
-﻿using Inedo.BuildMaster.Extensibility.Actions;
+﻿using Inedo.BuildMaster;
+using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
@@ -10,14 +11,12 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         private SourceControlFileFolderPicker ctlScriptPath;
         private ValidatingTextBox txtArguments;
 
-        public override bool DisplaySourceDirectory { get { return true; } }
-
         public override void BindToForm(ActionBase extension)
         {
             this.EnsureChildControls();
 
             var execCScript = (ExecuteCScriptAction)extension;
-            this.ctlScriptPath.Text = execCScript.ScriptPath;
+            this.ctlScriptPath.Text = Util.Path2.Combine(execCScript.OverriddenSourceDirectory ?? string.Empty, execCScript.ScriptPath ?? string.Empty);
             this.txtArguments.Text = execCScript.Arguments;
         }
 
@@ -27,40 +26,21 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
             return new ExecuteCScriptAction
             {
-                ScriptPath = this.ctlScriptPath.Text,
+                OverriddenSourceDirectory = Util.Path2.GetDirectoryName(this.ctlScriptPath.Text),
+                ScriptPath = Util.Path2.GetFileName(this.ctlScriptPath.Text),
                 Arguments = this.txtArguments.Text
             };
         }
 
         protected override void CreateChildControls()
         {
-            this.ctlScriptPath = new SourceControlFileFolderPicker
-            {
-                ServerId = this.ServerId,
-                Required = true
-            };
+            this.ctlScriptPath = new SourceControlFileFolderPicker { Required = true };
 
-            this.txtArguments = new ValidatingTextBox { Width = 300 };
+            this.txtArguments = new ValidatingTextBox();
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Script Path",
-                    "The path to a script that cscript.exe should run (generally .vbs or .js).",
-                    false,
-                    new StandardFormField(
-                        "Script Path:",
-                        this.ctlScriptPath
-                    )
-                ),
-                new FormFieldGroup(
-                    "CScript.exe Arguments",
-                    "Arguments to pass to CScript.",
-                    true,
-                    new StandardFormField(
-                        "Arguments:",
-                        this.txtArguments
-                    )
-                )
+                new SlimFormField("Script file path:", this.ctlScriptPath),
+                new SlimFormField("CScript arguments:", this.txtArguments)
             );
         }
     }

@@ -1,10 +1,9 @@
 using System.Web.UI.WebControls;
-using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
+using Inedo.Web.Controls.SimpleHtml;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
@@ -13,25 +12,16 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     /// </summary>
     internal sealed class StopServiceActionEditor : ActionEditorBase
     {
-        private DropDownList ddlServices;
+        private ServiceSelector ddlServices;
         private CheckBox chkWaitForStop;
         private CheckBox chkIgnoreAlreadyStoppedError;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StopServiceActionEditor"/> class.
-        /// </summary>
-        public StopServiceActionEditor()
-        {
-            this.ValidateBeforeCreate += this.StopServiceActionEditor_ValidateBeforeCreate;
-            this.ValidateBeforeSave += this.StopServiceActionEditor_ValidateBeforeSave;
-        }
 
         public override void BindToForm(ActionBase extension)
         {
             this.EnsureChildControls();
 
             var ssa = (StopServiceAction)extension;
-            this.ddlServices.SelectedValue = ssa.ServiceName;
+            this.ddlServices.Value = ssa.ServiceName;
             this.chkWaitForStop.Checked = ssa.WaitForStop;
             this.chkIgnoreAlreadyStoppedError.Checked = ssa.IgnoreAlreadyStoppedError;
         }
@@ -41,7 +31,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
             return new StopServiceAction
             {
-                ServiceName = this.ddlServices.SelectedValue,
+                ServiceName = this.ddlServices.Value,
                 WaitForStop = this.chkWaitForStop.Checked,
                 IgnoreAlreadyStoppedError = this.chkIgnoreAlreadyStoppedError.Checked
             };
@@ -49,10 +39,14 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         protected override void CreateChildControls()
         {
-            this.ddlServices = new DropDownList { ID = "ddlServices" };
-            this.ddlServices.Items.Add(new ListItem { Text = "(select)", Value = string.Empty });
-            foreach (var name in this.GetServiceNames())
-                this.ddlServices.Items.Add(new ListItem { Text = name, Value = name });
+            this.ddlServices = new ServiceSelector { ID = "ddlServices" };
+
+            var ctlServiceValidator = new StyledCustomValidator();
+            ctlServiceValidator.ServerValidate +=
+                (s, e) =>
+                {
+                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlServices.Value);
+                };
 
             this.chkWaitForStop = new CheckBox
             {
@@ -67,63 +61,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             };
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Service",
-                    "Specify the name of the service to stop.",
-                    false,
-                    new StandardFormField("Service:", this.ddlServices)
-                ),
-                new FormFieldGroup(
-                    "Wait for Stop",
-                    "Check this box if you would like this action to verify that the service has stopped before continuing.",
-                    false,
-                    new StandardFormField(string.Empty, this.chkWaitForStop)
-                ),
-                new FormFieldGroup(
-                    "Ignore Error if already Stopped",
-                    "Uncheck this box if you wish to generate an error if the service was stopped prior to executing this action.",
-                    true,
-                    new StandardFormField(string.Empty, this.chkIgnoreAlreadyStoppedError)
+                new SlimFormField("Service:", this.ddlServices, ctlServiceValidator),
+                new SlimFormField(
+                    "Options:",
+                    new Div(this.chkWaitForStop),
+                    new Div(this.chkIgnoreAlreadyStoppedError)
                 )
             );
-        }
-
-        private string[] GetServiceNames()
-        {
-            try
-            {
-                using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
-                {
-                    var remote = agent.GetService<IRemoteMethodExecuter>();
-                    return remote.InvokeFunc(ServicesHelper.GetServiceNames);
-                }
-            }
-            catch
-            {
-                return new string[0];
-            }
-        }
-        private void StopServiceActionEditor_ValidateBeforeCreate(object sender, ValidationEventArgs<ActionBase> e)
-        {
-            using (var agent = Util.Agents.CreateAgentFromId(this.ServerId))
-            {
-                var remote = agent.GetService<IRemoteMethodExecuter>();
-                if (!remote.InvokeFunc(ServicesHelper.IsAvailable))
-                {
-                    e.Message =
-                        "This action may not be created on the specified server because a " +
-                        "connection cannot be established with the server's services.";
-                    e.ValidLevel = ValidationLevel.Error;
-                }
-            }
-        }
-        private void StopServiceActionEditor_ValidateBeforeSave(object sender, ValidationEventArgs<ActionBase> e)
-        {
-            if (string.IsNullOrEmpty(((StopServiceAction)e.Extension).ServiceName))
-            {
-                e.ValidLevel = ValidationLevel.Error;
-                e.Message = "Service Name must be specified.";
-            }
         }
     }
 }

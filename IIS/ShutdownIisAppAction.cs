@@ -17,33 +17,32 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     public sealed class ShutdownIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShutdownIisAppAction"/> class.
-        /// </summary>
-        public ShutdownIisAppAction()
-        {
-        }
-
-        /// <summary>
         /// Gets or sets the name of the application pool to stop.
         /// </summary>
         [Persistent]
         public string AppPool { get; set; }
 
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format("Stop '{0}'", this.AppPool);
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Stop ",
+                    new Hilite(this.AppPool),
+                    " application pool"
+                )
+            );
         }
 
         protected override void Execute()
         {
+            this.LogDebug("Stopping application pool {0}...", this.AppPool);
             this.ExecuteRemoteCommand("stop");
+            this.LogInformation("{0} application pool stopped.", this.AppPool);
         }
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-            this.LogInformation("Stopping {0}...", this.AppPool);
             IISUtil.Instance.StopAppPool(this.AppPool);
             Thread.Sleep(100);
-            this.LogInformation("Application pool stopped.");
             return string.Empty;
         }
     }

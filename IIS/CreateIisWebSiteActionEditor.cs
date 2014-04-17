@@ -1,11 +1,10 @@
 ﻿using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
-    public sealed class CreateIisWebSiteActionEditor : ActionEditorBase
+    internal sealed class CreateIisWebSiteActionEditor : ActionEditorBase
     {
         private ValidatingTextBox txtName;
         private ValidatingTextBox txtPhysicalPath;
@@ -41,39 +40,37 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
         protected override void CreateChildControls()
         {
-            this.txtName = new ValidatingTextBox() { Width = 300, Required = true };
-            this.txtPhysicalPath = new ValidatingTextBox() { Width = 300, Required = true };
-            this.txtApplicationPoolName = new ValidatingTextBox() { Width = 300, Required = true };
-            this.txtPort = new ValidatingTextBox() { Width = 125, DefaultText = "80" };
-            this.txtHostName = new ValidatingTextBox() { Width = 300, DefaultText = "any" };
-            this.txtIPAddress = new ValidatingTextBox() { Width = 300, DefaultText = "All unassigned" };
+            this.txtName = new ValidatingTextBox { Required = true };
+            this.txtPhysicalPath = new ValidatingTextBox { Required = true };
+            this.txtApplicationPoolName = new ValidatingTextBox() { Required = true };
+            this.txtPort = new ValidatingTextBox { DefaultText = "80" };
+            this.txtHostName = new ValidatingTextBox { DefaultText = "any" };
+            this.txtIPAddress = new ValidatingTextBox { DefaultText = "All unassigned" };
 
             this.Controls.Add(
-                new FormFieldGroup(
-                    "Name",
-                    "The name of the web site to create on the remote server.",
-                    false,
-                    new StandardFormField("Name:", this.txtName)
+                new SlimFormField(
+                    "Web site name:",
+                    this.txtName
                 ),
-                new FormFieldGroup(
-                    "Physical Path",
-                    "The physical path of the web site on the remote server.",
-                    false,
-                    new StandardFormField("Physical Path:", this.txtPhysicalPath)
+                new SlimFormField(
+                    "Physical path:",
+                    this.txtPhysicalPath
                 ),
-                new FormFieldGroup(
-                    "Application Pool",
-                    "The name of the application pool that will host the web site.",
-                    false,
-                    new StandardFormField("Application Pool:", this.txtApplicationPoolName)
+                new SlimFormField(
+                    "Application pool:",
+                    this.txtApplicationPoolName
                 ),
-                new FormFieldGroup(
-                    "Binding Information",
-                    "Specify the port, and optionally, the hostname and IP address of the web site.",
-                    false,
-                    new StandardFormField("Port:", this.txtPort),
-                    new StandardFormField("Host Name:", this.txtHostName),
-                    new StandardFormField("IP Address:", this.txtIPAddress)
+                new SlimFormField(
+                    "Port:",
+                    this.txtPort
+                ),
+                new SlimFormField(
+                    "Host name:",
+                    this.txtHostName
+                ),
+                new SlimFormField(
+                    "IP address:",
+                    this.txtIPAddress
                 )
             );
         }

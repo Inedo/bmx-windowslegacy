@@ -44,7 +44,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         /// Gets or sets the service to stop.
         /// </summary>
         [Persistent]
-        public string ServiceName { get; set; } 
+        public string ServiceName { get; set; }
 
         /// <summary>
         /// Gets or sets whether the action should continue after stopping the service
@@ -59,7 +59,21 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         /// </summary>
         [Persistent]
         public bool IgnoreAlreadyStoppedError { get; set; }
-     
+
+        public override ActionDescription GetActionDescription()
+        {
+            var longDesc = new LongActionDescription();
+
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Stop ",
+                    this.ServiceName,
+                    " Service"
+                ),
+                longDesc
+            );
+        }
+
         protected override void Execute()
         {
             this.LogInformation("Stopping service {0}...", this.ServiceName);
@@ -100,7 +114,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                         if (stopped) break;
                         Thread.Sleep(1000 * 3); // poll every 3 seconds
                     }
-                    
+
                     this.LogInformation("Service stopped.");
                 }
                 else

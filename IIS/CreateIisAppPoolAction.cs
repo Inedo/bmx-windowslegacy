@@ -43,40 +43,38 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public string ManagedRuntimeVersion { get; set; }
 
-        /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
-        /// </returns>
-        /// <remarks>
-        /// This should return a user-friendly string describing what the Action does
-        /// and the state of its important persistent properties.
-        /// </remarks>
-        public override string ToString()
+        public override ActionDescription GetActionDescription()
         {
-            return string.Format(
-                "Create IIS application pool \"{0}\" (.NET {1}) in {2} mode.",
-                this.Name,
-                this.ManagedRuntimeVersion,
-                this.IntegratedMode ? "integrated" : "classic"
+            return new ActionDescription(
+                new ShortActionDescription(
+                    "Create ",
+                    new Hilite(this.Name),
+                    " IIS Application Pool"
+                ),
+                new LongActionDescription(
+                    "for ",
+                    new Hilite(".NET " + this.ManagedRuntimeVersion),
+                    ", ",
+                    new Hilite(this.IntegratedMode ? "integrated" : "classic"),
+                    " pipeline"
+                )
             );
-        }
-
-        protected override string ProcessRemoteCommand(string name, string[] args)
-        {
-            this.LogInformation("Creating application pool \"{0}\"", this.Name);
-
-            IISUtil.Instance.CreateAppPool(this.Name, this.User, this.Password, this.IntegratedMode, this.ManagedRuntimeVersion);
-
-            this.LogInformation("Application pool created.");
-
-            return null;
         }
 
         protected override void Execute()
         {
+            this.LogDebug("Creating application pool {0}...", this.Name);
             this.ExecuteRemoteCommand(null);
+            this.LogInformation("{0} application pool created.", this.Name);
+        }
+
+        protected override string ProcessRemoteCommand(string name, string[] args)
+        {
+            this.LogDebug("User: " + this.User);
+            this.LogDebug("Pipeline: {0} ({1})", this.ManagedRuntimeVersion, this.IntegratedMode ? "integrated" : "classic");
+
+            IISUtil.Instance.CreateAppPool(this.Name, this.User, this.Password, this.IntegratedMode, this.ManagedRuntimeVersion);
+            return null;
         }
     }
 }

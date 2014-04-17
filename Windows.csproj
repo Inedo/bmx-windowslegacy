@@ -46,10 +46,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;UNITTEST</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,26 +60,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BuildMaster.Web.Controls">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.1\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="BuildMasterCore">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.1\lib\net40\BuildMasterCore.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\BuildMasterCore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="InedoLib">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.1\lib\net40\InedoLib.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\Inedo.BuildMaster.SDK.4.2\lib\net40\InedoLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -96,6 +98,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIS\AppPoolSelector.cs" />
     <Compile Include="IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -121,6 +124,7 @@
     </Compile>
     <Compile Include="Scripting\PowerShell\PowerShellScriptRunner.cs" />
     <Compile Include="Scripting\PowerShell\PowerShellScriptType.cs" />
+    <Compile Include="Services\ServiceSelector.cs" />
     <Compile Include="Services\StopServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -165,6 +169,14 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="IIS\AppPoolSelector.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Services\ServiceSelector.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -175,7 +187,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
-if exist $(SolutionDir) $(SolutionDir)..\zip -j $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.dll
+if exist $(SolutionDir) $(SolutionDir)..\zip -r $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.*
 if exist $(TargetDir)Microsoft.Web.Administration.dll del $(TargetDir)Microsoft.Web.Administration.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>
