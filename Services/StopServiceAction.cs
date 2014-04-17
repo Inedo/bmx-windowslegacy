@@ -1,6 +1,5 @@
 using System;
 using System.ServiceProcess;
-using System.Threading;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
@@ -111,8 +110,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                     {
                         sc.Refresh();
                         stopped = sc.Status == ServiceControllerStatus.Stopped;
-                        if (stopped) break;
-                        Thread.Sleep(1000 * 3); // poll every 3 seconds
+                        if (stopped)
+                            break;
+
+                        this.Context.CancellationToken.WaitHandle.WaitOne(1000 * 3);
+                        this.ThrowIfCanceledOrTimeoutExpired();
                     }
 
                     this.LogInformation("Service stopped.");

@@ -81,7 +81,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             this.LogInformation("Starting service {0}...", this.ServiceName);
             this.ExecuteRemoteCommand("start");
         }
-
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
             using (var sc = new ServiceController(this.ServiceName))
@@ -117,7 +116,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                         if (started)
                             break;
 
-                        Thread.Sleep(1000 * 3); // poll every 3 seconds
+                        this.Context.CancellationToken.WaitHandle.WaitOne(1000 * 3);
+                        this.ThrowIfCanceledOrTimeoutExpired();
 
                         if (sc.Status == ServiceControllerStatus.Stopped)
                         {
