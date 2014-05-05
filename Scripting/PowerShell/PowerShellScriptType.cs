@@ -48,7 +48,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 
             var documentationToken = tokens
                 .Take(paramIndex)
-                .LastOrDefault(t => t.Type == PSTokenType.Comment);
+                .Where(t => t.Type == PSTokenType.Comment && t.Content != null && t.Content.StartsWith("<#") && t.Content.EndsWith("#>"))
+                .LastOrDefault();
 
             if (documentationToken != null)
             {
