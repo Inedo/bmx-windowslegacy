@@ -19,6 +19,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
     {
         private static readonly Regex DocumentationRegex = new Regex(@"\s*\.(?<1>\S+)[ \t]*(?<2>[^\r\n]+)?\s*\n(?<3>(.(?!\n\.))+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
         private static readonly Regex SpaceCollapseRegex = new Regex(@"\s*\n\s*", RegexOptions.Singleline);
+        private static readonly Regex ParameterTypeRegex = new Regex(@"^\[(?<1>.+)\]$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
 
         public override string TrueValue
         {
@@ -92,13 +93,54 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 
             var ps = System.Management.Automation.PowerShell.Create();
 
+            string fullText;
+
             using (var reader = GetTextReader2(context))
             {
-                ps.AddScript(reader.ReadToEnd());
+                fullText = reader.ReadToEnd();
             }
 
-            foreach (var arg in context.Arguments)
-                ps.AddParameter(arg.Key, arg.Value);
+            ps.AddScript(fullText);
+
+            Collection<PSParseError> errors;
+            var tokens = PSParser.Tokenize(fullText, out errors);
+
+            int paramIndex = tokens
+                .TakeWhile(t => t.Type != PSTokenType.Keyword || !string.Equals(t.Content, "param", StringComparison.OrdinalIgnoreCase))
+                .Count();
+
+            var parameters = context
+                .Arguments
+                .GroupJoin(
+                    this.ScrapeParameters(tokens.Skip(paramIndex + 1)),
+                    a => a.Key,
+                    p => p.Name,
+                    (a, p) => new { Name = a.Key, a.Value, Metadata = p.FirstOrDefault() },
+                    StringComparer.OrdinalIgnoreCase);
+
+            foreach (var arg in parameters)
+            {
+                if (arg.Metadata != null)
+                {
+                    if (string.Equals(arg.Metadata.Type, "switch", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase))
+                            ps.AddParameter(arg.Name);
+                    }
+                    else if (string.Equals(arg.Metadata.Type, "bool", StringComparison.OrdinalIgnoreCase) || string.Equals(arg.Metadata.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ps.AddParameter(arg.Name, string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase));
+                    }
+                    else
+                    {
+                        ps.AddParameter(arg.Name, arg.Value);
+                    }
+                }
+                else
+                {
+                    ps.AddParameter(arg.Name, arg.Value);
+                }
+            }
 
             foreach (var var in context.Variables)
                 ps.Runspace.SessionStateProxy.SetVariable(var.Key, var.Value);
@@ -140,7 +182,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             foreach (var token in paramTokens)
             {
                 if (token.Type == PSTokenType.Type)
-                    currentType = token.Content;
+                {
+                    var match = ParameterTypeRegex.Match(token.Content ?? string.Empty);
+                    if (match.Success)
+                        currentType = match.Groups[1].Value;
+                }
 
                 if (token.Type == PSTokenType.Variable)
                 {
@@ -163,7 +209,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             public override string ToString()
             {
                 if (this.Type != null)
-                    return this.Type + " " + this.Name;
+                    return "[" + this.Type + "] " + this.Name;
                 else
                     return this.Name;
             }
