@@ -81,6 +81,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                         (p, d) => new ScriptParameterMetadata(
                             name: p.Name,
                             description: d.Select(t => t.Value).FirstOrDefault(),
+                            defaultValue: p.DefaultValue,
                             inputTypeCode: p.IsBooleanOrSwitch ? Domains.ScriptParameterTypes.CheckBox : null
                         ),
                         StringComparer.OrdinalIgnoreCase)
@@ -128,18 +129,21 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             {
                 if (arg.Metadata != null)
                 {
-                    if (string.Equals(arg.Metadata.Type, "switch", StringComparison.OrdinalIgnoreCase))
+                    if (arg.Metadata.DefaultValue == null || !string.IsNullOrEmpty(arg.Value))
                     {
-                        if (string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase))
-                            ps.AddParameter(arg.Name);
-                    }
-                    else if (string.Equals(arg.Metadata.Type, "bool", StringComparison.OrdinalIgnoreCase) || string.Equals(arg.Metadata.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ps.AddParameter(arg.Name, string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase));
-                    }
-                    else
-                    {
-                        ps.AddParameter(arg.Name, arg.Value);
+                        if (string.Equals(arg.Metadata.Type, "switch", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase))
+                                ps.AddParameter(arg.Name);
+                        }
+                        else if (string.Equals(arg.Metadata.Type, "bool", StringComparison.OrdinalIgnoreCase) || string.Equals(arg.Metadata.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ps.AddParameter(arg.Name, string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase));
+                        }
+                        else
+                        {
+                            ps.AddParameter(arg.Name, arg.Value);
+                        }
                     }
                 }
                 else
@@ -168,7 +172,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             int groupDepth = 0;
             var paramTokens = new List<PSToken>();
 
-            foreach (var token in tokens)
+            var filteredTokens = tokens
+                .Where(t => t.Type != PSTokenType.Comment && t.Type != PSTokenType.NewLine);
+
+            foreach (var token in filteredTokens)
             {
                 paramTokens.Add(token);
 
@@ -183,34 +190,55 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                 }
             }
 
-            string currentType = null;
+            var currentParam = new ParamInfo();
+
+            bool expectDefaultValue = false;
 
             foreach (var token in paramTokens)
             {
+                if (token.Type == PSTokenType.Operator && token.Content != "=")
+                {
+                    expectDefaultValue = false;
+                    if (currentParam.Name != null)
+                        yield return currentParam;
+
+                    currentParam = new ParamInfo();
+                    continue;
+                }
+
+                if (expectDefaultValue)
+                {
+                    currentParam.DefaultValue = token.Content;
+                    expectDefaultValue = false;
+                    continue;
+                }
+
                 if (token.Type == PSTokenType.Type)
                 {
                     var match = ParameterTypeRegex.Match(token.Content ?? string.Empty);
                     if (match.Success)
-                        currentType = match.Groups[1].Value;
+                        currentParam.Type = match.Groups[1].Value;
                 }
 
                 if (token.Type == PSTokenType.Variable)
-                {
-                    yield return new ParamInfo
-                    {
-                        Name = token.Content,
-                        Type = currentType
-                    };
+                    currentParam.Name = token.Content;
 
-                    currentType = null;
+                if (token.Type == PSTokenType.Operator && token.Content == "=")
+                {
+                    expectDefaultValue = true;
+                    continue;
                 }
             }
+
+            if (currentParam.Name != null)
+                yield return currentParam;
         }
 
         private sealed class ParamInfo
         {
             public string Name { get; set; }
             public string Type { get; set; }
+            public string DefaultValue { get; set; }
             public bool IsBooleanOrSwitch
             {
                 get
