@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Scripting;
 
 namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
@@ -76,7 +77,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                         docBlocks["PARAMETER"],
                         p => p.Name,
                         d => d.Arg,
-                        (p, d) => new ScriptParameterMetadata(p.Name, d.Select(t => t.Value).FirstOrDefault()),
+                        (p, d) => new ScriptParameterMetadata(
+                            name: p.Name,
+                            description: d.Select(t => t.Value).FirstOrDefault(),
+                            inputTypeCode: p.IsBooleanOrSwitch ? Domains.ScriptParameterTypes.CheckBox : null
+                        ),
                         StringComparer.OrdinalIgnoreCase)
                 );
             }
@@ -203,8 +208,17 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 
         private sealed class ParamInfo
         {
-            public string Name;
-            public string Type;
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public bool IsBooleanOrSwitch
+            {
+                get
+                {
+                    return string.Equals(this.Type, "switch", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(this.Type, "bool", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(this.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase);
+                }
+            }
 
             public override string ToString()
             {
