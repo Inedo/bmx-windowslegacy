@@ -61,23 +61,38 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
         }
         private void Debug_DataAdded(object sender, DataAddedEventArgs e)
         {
-            this.OnLogReceived(new LogReceivedEventArgs(((PSDataCollection<DebugRecord>)sender)[e.Index].ToString(), MessageLevel.Debug));
+            this.LogMessage((PSDataCollection<DebugRecord>)sender, e.Index, MessageLevel.Debug);
         }
         private void Error_DataAdded(object sender, DataAddedEventArgs e)
         {
-            this.OnLogReceived(new LogReceivedEventArgs(((PSDataCollection<ErrorRecord>)sender)[e.Index].ToString(), MessageLevel.Error));
+            this.LogMessage((PSDataCollection<ErrorRecord>)sender, e.Index, MessageLevel.Error);
         }
         private void Verbose_DataAdded(object sender, DataAddedEventArgs e)
         {
-            this.OnLogReceived(new LogReceivedEventArgs(((PSDataCollection<VerboseRecord>)sender)[e.Index].ToString(), MessageLevel.Debug));
+            this.LogMessage((PSDataCollection<VerboseRecord>)sender, e.Index, MessageLevel.Debug);
         }
         private void Warning_DataAdded(object sender, DataAddedEventArgs e)
         {
-            this.OnLogReceived(new LogReceivedEventArgs(((PSDataCollection<WarningRecord>)sender)[e.Index].ToString(), MessageLevel.Warning));
+            this.LogMessage((PSDataCollection<WarningRecord>)sender, e.Index, MessageLevel.Warning);
         }
         private void Output_DataAdded(object sender, DataAddedEventArgs e)
         {
-            this.OnLogReceived(new LogReceivedEventArgs(this.outputData[e.Index].ToString(), MessageLevel.Information));
+            this.LogMessage(this.outputData, e.Index, MessageLevel.Information);
+        }
+
+        private void LogMessage<T>(PSDataCollection<T> container, int index, MessageLevel level)
+            where T : class
+        {
+            if (container != null)
+            {
+                var obj = container[index];
+                if (obj != null)
+                {
+                    var text = obj.ToString();
+                    if (!string.IsNullOrEmpty(text))
+                        this.OnLogReceived(new LogReceivedEventArgs(text, level));
+                }
+            }
         }
     }
 }
