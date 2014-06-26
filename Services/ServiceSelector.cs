@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Agents;
-using Inedo.Data;
 using Inedo.Web.ClientResources;
 using Inedo.Web.Controls;
 using Inedo.Web.Handlers;
@@ -50,43 +49,48 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         [AjaxMethod]
         public static object AjaxGetServices(int serverId, string term = null)
         {
-            if (serverId <= 0)
-                return new object[0];
-
-            var type = Type.GetType("Inedo.BuildMaster.Web.Security.WebUserContext,BuildMaster");
-            var canPerformTask = (Func<int, int?, int?, int?, int?, bool>)Delegate.CreateDelegate(typeof(Func<int, int?, int?, int?, int?, bool>), type.GetMethod("CanPerformTask"));
-            if (!canPerformTask(20 /*Environments_ViewServer*/, null, null, null, serverId))
-                throw new SecurityException();
-
-            var serverInfo = StoredProcs.Environments_GetServer(serverId, 0).Execute().Servers.FirstOrDefault();
-            if (serverInfo == null)
-                return new object[0];
-
-            if ((YNIndicator)serverInfo.ServerGroup_Indicator)
+            try
             {
-                var groupServer = StoredProcs.Environments_GetServersInGroup(serverId, Domains.YN.No)
-                    .Execute()
-                    .FirstOrDefault(s => canPerformTask(20 /*Environments_ViewServer*/, null, null, null, s.Server_Id));
-
-                if (groupServer == null)
+                if (serverId <= 0)
                     return new object[0];
 
-                serverId = groupServer.Server_Id;
-            }
+                if (!Shims.CanPerformTask(20 /*Environments_ViewServer*/, serverId: serverId))
+                    throw new SecurityException();
 
-            using (var proxy = Util.Proxy.CreateAgentProxy(serverId))
-            {
-                var remote = proxy.TryGetService<IRemoteMethodExecuter>();
-                IEnumerable<KeyValuePair<string, string>> serviceNames = (KeyValuePair<string, string>[])remote.InvokeMethod(new Func<KeyValuePair<string, string>[]>(ServicesHelper.GetServices).Method, null, null);
+                var serverInfo = StoredProcs.Environments_GetServer(serverId, 0).Execute().Servers.FirstOrDefault();
+                if (serverInfo == null)
+                    return new object[0];
 
-                if (!string.IsNullOrWhiteSpace(term))
+                if (serverInfo.ServerType_Code != Domains.ServerTypeCodes.Server)
                 {
-                    serviceNames = serviceNames
-                        .Where(s => s.Key.IndexOf(term, StringComparison.OrdinalIgnoreCase) == 0 || s.Value.IndexOf(term, StringComparison.OrdinalIgnoreCase) == 0);
+                    var groupServer = StoredProcs.Environments_GetServersInGroup(serverId, Domains.YN.No)
+                        .Execute()
+                        .FirstOrDefault(s => Shims.CanPerformTask(20 /*Environments_ViewServer*/, serverId: s.Server_Id));
+
+                    if (groupServer == null)
+                        return new object[0];
+
+                    serverId = groupServer.Server_Id;
                 }
 
-                return serviceNames
-                    .Select(s => new { id = s.Key, name = s.Value });
+                using (var proxy = Util.Proxy.CreateAgentProxy(serverId))
+                {
+                    var remote = proxy.TryGetService<IRemoteMethodExecuter>();
+                    IEnumerable<KeyValuePair<string, string>> serviceNames = (KeyValuePair<string, string>[])remote.InvokeMethod(new Func<KeyValuePair<string, string>[]>(ServicesHelper.GetServices).Method, null, null);
+
+                    if (!string.IsNullOrWhiteSpace(term))
+                    {
+                        serviceNames = serviceNames
+                            .Where(s => s.Key.IndexOf(term, StringComparison.OrdinalIgnoreCase) == 0 || s.Value.IndexOf(term, StringComparison.OrdinalIgnoreCase) == 0);
+                    }
+
+                    return serviceNames
+                        .Select(s => new { id = s.Key, name = s.Value });
+                }
+            }
+            catch
+            {
+                return new object[0];
             }
         }
     }
