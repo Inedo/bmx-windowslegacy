@@ -31,6 +31,15 @@
                 id: term,
                 text: term
             };
+        },
+        initSelection: function (element, callback) {
+            var value = $(element).val();
+            if (value) {
+                callback({
+                    id: value,
+                    text: value
+                });
+            }
         }
     });
 }
