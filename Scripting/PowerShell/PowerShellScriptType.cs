@@ -18,9 +18,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
     [Tag("windows")]
     public sealed class PowerShellScriptType : ScriptTypeBase, IScriptMetadataReader
     {
-        private static readonly Regex DocumentationRegex = new Regex(@"\s*\.(?<1>\S+)[ \t]*(?<2>[^\r\n]+)?\s*\n(?<3>(.(?!\n\.))+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
-        private static readonly Regex SpaceCollapseRegex = new Regex(@"\s*\n\s*", RegexOptions.Singleline);
-        private static readonly Regex ParameterTypeRegex = new Regex(@"^\[(?<1>.+)\]$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture);
+        private static readonly Lazy<Regex> DocumentationRegex = new Lazy<Regex>(() => new Regex(@"\s*\.(?<1>\S+)[ \t]*(?<2>[^\r\n]+)?\s*\n(?<3>(.(?!\n\.))+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture));
+        private static readonly Lazy<Regex> SpaceCollapseRegex = new Lazy<Regex>(() => new Regex(@"\s*\n\s*", RegexOptions.Singleline));
+        private static readonly Lazy<Regex> ParameterTypeRegex = new Lazy<Regex>(() => new Regex(@"^\[(?<1>.+)\]$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture));
 
         public override string TrueValue
         {
@@ -58,13 +58,14 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                     documentation = documentation.Substring(2, documentation.Length - 4);
 
                 var docBlocks = DocumentationRegex
+                    .Value
                     .Matches(documentation)
                     .Cast<Match>()
                     .Select(m => new
                         {
                             Name = m.Groups[1].Value,
                             Arg = !string.IsNullOrWhiteSpace(m.Groups[2].Value) ? m.Groups[2].Value.Trim() : null,
-                            Value = !string.IsNullOrWhiteSpace(m.Groups[3].Value) ? SpaceCollapseRegex.Replace(m.Groups[3].Value.Trim(), " ") : null
+                            Value = !string.IsNullOrWhiteSpace(m.Groups[3].Value) ? SpaceCollapseRegex.Value.Replace(m.Groups[3].Value.Trim(), " ") : null
                         })
                     .Where(d => d.Value != null)
                     .ToLookup(
@@ -215,7 +216,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 
                 if (token.Type == PSTokenType.Type)
                 {
-                    var match = ParameterTypeRegex.Match(token.Content ?? string.Empty);
+                    var match = ParameterTypeRegex.Value.Match(token.Content ?? string.Empty);
                     if (match.Success)
                         currentParam.Type = match.Groups[1].Value;
                 }
