@@ -148,6 +148,10 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Shims.cs" />
+    <Compile Include="WindowsExtensionConfigurer.cs" />
+    <Compile Include="WindowsExtensionConfigurerEditor.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
