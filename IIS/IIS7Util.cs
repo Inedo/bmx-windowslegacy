@@ -107,6 +107,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                             appPool.ProcessModel.IdentityType = ProcessModelIdentityType.NetworkService;
                             break;
 
+                        case "ApplicationPoolIdentity":
+                            appPool.ProcessModel.IdentityType = ProcessModelIdentityType.ApplicationPoolIdentity;
+                            break;
+
                         default:
                             appPool.ProcessModel.IdentityType = ProcessModelIdentityType.SpecificUser;
                             appPool.ProcessModel.UserName = user;

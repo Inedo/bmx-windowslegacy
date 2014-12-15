@@ -28,7 +28,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             var action = (CreateIisAppPoolAction)extension;
 
             this.txtName.Text = action.Name;
-            if (new[] { "LocalSystem", "LocalService", "NetworkService" }.Contains(action.User, StringComparer.OrdinalIgnoreCase))
+            if (new[] { "LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity" }.Contains(action.User, StringComparer.OrdinalIgnoreCase))
             {
                 this.ddlUser.SelectedValue = action.User;
             }
@@ -72,6 +72,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     new ListItem("Local System", "LocalSystem"),
                     new ListItem("Local Service", "LocalService"),
                     new ListItem("Network Service", "NetworkService"),
+                    new ListItem("Application Pool Identity", "ApplicationPoolIdentity"),
                     new ListItem("Custom...", "custom")
                 }
             };
