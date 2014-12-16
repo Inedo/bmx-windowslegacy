@@ -20,7 +20,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
     {
         private static readonly Lazy<Regex> DocumentationRegex = new Lazy<Regex>(() => new Regex(@"\s*\.(?<1>\S+)[ \t]*(?<2>[^\r\n]+)?\s*\n(?<3>(.(?!\n\.))+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline | RegexOptions.ExplicitCapture));
         private static readonly Lazy<Regex> SpaceCollapseRegex = new Lazy<Regex>(() => new Regex(@"\s*\n\s*", RegexOptions.Singleline));
-        private static readonly Lazy<Regex> ParameterTypeRegex = new Lazy<Regex>(() => new Regex(@"^\[(?<1>.+)\]$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture));
+        private static readonly Lazy<Regex> ParameterTypeRegex = new Lazy<Regex>(() => new Regex(@"^\[?(?<1>[^\]]+)\]?$", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture));
 
         public override string TrueValue
         {
