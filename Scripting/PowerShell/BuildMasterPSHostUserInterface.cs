@@ -12,10 +12,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
     internal sealed class BuildMasterPSHostUserInterface : PSHostUserInterface, ILogger
     {
         private readonly StringBuilder lineBuffer = new StringBuilder();
+        private readonly BuildMasterPSHostRawUserInterface raw = new BuildMasterPSHostRawUserInterface();
 
         public event EventHandler<LogMessageEventArgs> MessageLogged;
 
-        public override PSHostRawUserInterface RawUI => null;
+        public override PSHostRawUserInterface RawUI => this.raw;
 
         public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
@@ -42,6 +43,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             throw new NotImplementedException();
         }
 
+        public override void WriteLine() => this.WriteLine(Environment.NewLine);
+        public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value) => this.WriteLine(value);
         public override void Write(string value)
         {
             if (value.Contains("\n"))
