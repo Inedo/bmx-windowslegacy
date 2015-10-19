@@ -99,64 +99,71 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            var ps = System.Management.Automation.PowerShell.Create();
-
-            string fullText;
-
-            using (var reader = GetTextReader2(context))
+            var ps = new PowerShellScriptRunner();
+            try
             {
-                fullText = reader.ReadToEnd();
-            }
+                string fullText;
 
-            ps.AddScript(fullText);
-
-            Collection<PSParseError> errors;
-            var tokens = PSParser.Tokenize(fullText, out errors);
-
-            int paramIndex = tokens
-                .TakeWhile(t => t.Type != PSTokenType.Keyword || !string.Equals(t.Content, "param", StringComparison.OrdinalIgnoreCase))
-                .Count();
-
-            var parameters = context
-                .Arguments
-                .GroupJoin(
-                    this.ScrapeParameters(tokens.Skip(paramIndex + 1)),
-                    a => a.Key,
-                    p => p.Name,
-                    (a, p) => new { Name = a.Key, a.Value, Metadata = p.FirstOrDefault() },
-                    StringComparer.OrdinalIgnoreCase);
-
-            foreach (var arg in parameters)
-            {
-                if (arg.Metadata != null)
+                using (var reader = GetTextReader2(context))
                 {
-                    if (arg.Metadata.DefaultValue == null || !string.IsNullOrEmpty(arg.Value))
+                    fullText = reader.ReadToEnd();
+                }
+
+                ps.PowerShell.AddScript(fullText);
+
+                Collection<PSParseError> errors;
+                var tokens = PSParser.Tokenize(fullText, out errors);
+
+                int paramIndex = tokens
+                    .TakeWhile(t => t.Type != PSTokenType.Keyword || !string.Equals(t.Content, "param", StringComparison.OrdinalIgnoreCase))
+                    .Count();
+
+                var parameters = context
+                    .Arguments
+                    .GroupJoin(
+                        this.ScrapeParameters(tokens.Skip(paramIndex + 1)),
+                        a => a.Key,
+                        p => p.Name,
+                        (a, p) => new { Name = a.Key, a.Value, Metadata = p.FirstOrDefault() },
+                        StringComparer.OrdinalIgnoreCase);
+
+                foreach (var arg in parameters)
+                {
+                    if (arg.Metadata != null)
                     {
-                        if (string.Equals(arg.Metadata.Type, "switch", StringComparison.OrdinalIgnoreCase))
+                        if (arg.Metadata.DefaultValue == null || !string.IsNullOrEmpty(arg.Value))
                         {
-                            if (string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase))
-                                ps.AddParameter(arg.Name);
-                        }
-                        else if (string.Equals(arg.Metadata.Type, "bool", StringComparison.OrdinalIgnoreCase) || string.Equals(arg.Metadata.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase))
-                        {
-                            ps.AddParameter(arg.Name, string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase));
-                        }
-                        else
-                        {
-                            ps.AddParameter(arg.Name, arg.Value);
+                            if (string.Equals(arg.Metadata.Type, "switch", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase))
+                                    ps.PowerShell.AddParameter(arg.Name);
+                            }
+                            else if (string.Equals(arg.Metadata.Type, "bool", StringComparison.OrdinalIgnoreCase) || string.Equals(arg.Metadata.Type, "System.Boolean", StringComparison.OrdinalIgnoreCase))
+                            {
+                                ps.PowerShell.AddParameter(arg.Name, string.Equals(arg.Value, this.TrueValue, StringComparison.OrdinalIgnoreCase));
+                            }
+                            else
+                            {
+                                ps.PowerShell.AddParameter(arg.Name, arg.Value);
+                            }
                         }
                     }
+                    else
+                    {
+                        ps.PowerShell.AddParameter(arg.Name, arg.Value);
+                    }
                 }
-                else
-                {
-                    ps.AddParameter(arg.Name, arg.Value);
-                }
+
+                foreach (var var in context.Variables)
+                    ps.PowerShell.Runspace.SessionStateProxy.SetVariable(var.Key, var.Value);
+
+                return ps;
             }
-
-            foreach (var var in context.Variables)
-                ps.Runspace.SessionStateProxy.SetVariable(var.Key, var.Value);
-
-            return new PowerShellScriptRunner(ps);
+            catch
+            {
+                ps?.Dispose();
+                throw;
+            }
         }
 
         private static TextReader GetTextReader2(ScriptExecutionContext context)

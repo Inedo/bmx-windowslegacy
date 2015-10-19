@@ -1,4 +1,6 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Scripting;
@@ -8,20 +10,30 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 {
     internal sealed class PowerShellScriptRunner : ActiveScriptBase
     {
+        private BuildMasterPSHost pshost = new BuildMasterPSHost();
+        private Runspace runspace;
         private System.Management.Automation.PowerShell powerShell;
         private PSDataCollection<PSObject> outputData = new PSDataCollection<PSObject>();
         private Task runScriptTask;
         private bool disposed;
 
-        public PowerShellScriptRunner(System.Management.Automation.PowerShell powerShell)
+        public PowerShellScriptRunner()
         {
-            this.powerShell = powerShell;
+            this.runspace = RunspaceFactory.CreateRunspace(this.pshost);
+            this.runspace.Open();
+            this.powerShell = System.Management.Automation.PowerShell.Create();
+            this.powerShell.Runspace = this.runspace;
+
+            this.pshost.MessageLogged += (s, e) => this.OnLogReceived(new LogReceivedEventArgs(e.Message, e.Level));
+
             this.powerShell.Streams.Debug.DataAdded += this.Debug_DataAdded;
             this.powerShell.Streams.Error.DataAdded += this.Error_DataAdded;
             this.powerShell.Streams.Verbose.DataAdded += this.Verbose_DataAdded;
             this.powerShell.Streams.Warning.DataAdded += this.Warning_DataAdded;
             this.outputData.DataAdded += this.Output_DataAdded;
         }
+
+        internal System.Management.Automation.PowerShell PowerShell => this.powerShell;
 
         public override void Start()
         {
@@ -41,6 +53,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
                 this.powerShell.Streams.Warning.DataAdded -= this.Warning_DataAdded;
                 this.outputData.DataAdded -= this.Output_DataAdded;
                 this.powerShell.Dispose();
+                this.runspace.Dispose();
                 this.disposed = true;
             }
 
