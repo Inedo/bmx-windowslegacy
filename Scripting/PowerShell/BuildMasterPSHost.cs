@@ -7,7 +7,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 {
     internal sealed class BuildMasterPSHost : PSHost, ILogger
     {
-        private static readonly Guid UniqueId = new Guid("8959E55A-3332-4123-A1E8-6C967C03B7BA");
+        private readonly Guid UniqueId = Guid.NewGuid();
         private readonly BuildMasterPSHostUserInterface ui = new BuildMasterPSHostUserInterface();
 
         public BuildMasterPSHost()
