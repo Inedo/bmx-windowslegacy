@@ -119,6 +119,15 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="IIS\StartupIisAppAction.cs" />
+    <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHost.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHostRawUserInterface.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHostUserInterface.cs" />
+    <Compile Include="PowerShell\ExecutePowerShellJob.cs" />
+    <Compile Include="PowerShell\PowerShellExtensions.cs" />
+    <Compile Include="PowerShell\PowerShellOutputEventArgs.cs" />
+    <Compile Include="PowerShell\PowerShellScriptRunner.cs" />
+    <Compile Include="PowerShell\ShouldExitEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\PowerShell\BuildMasterPSHost.cs" />
     <Compile Include="Scripting\PowerShell\BuildMasterPSHostRawUserInterface.cs" />
