@@ -85,8 +85,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 Controls = 
                 { 
                     new LiteralControl("<br />"),
-                    new StandardFormField("User Name:", this.txtUser), 
-                    new StandardFormField("Password:", this.txtPassword)
+                    new SlimFormField("User name:", this.txtUser), 
+                    new SlimFormField("Password:", this.txtPassword)
                 } 
             };
 

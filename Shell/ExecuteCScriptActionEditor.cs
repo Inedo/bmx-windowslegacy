@@ -1,7 +1,7 @@
-﻿using Inedo.BuildMaster;
-using Inedo.BuildMaster.Extensibility.Actions;
+﻿using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
+using Inedo.IO;
 using Inedo.Web.Controls;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
@@ -16,7 +16,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             this.EnsureChildControls();
 
             var execCScript = (ExecuteCScriptAction)extension;
-            this.ctlScriptPath.Text = Util.Path2.Combine(execCScript.OverriddenSourceDirectory ?? string.Empty, execCScript.ScriptPath ?? string.Empty);
+            this.ctlScriptPath.Text = PathEx.Combine(execCScript.OverriddenSourceDirectory ?? string.Empty, execCScript.ScriptPath ?? string.Empty);
             this.txtArguments.Text = execCScript.Arguments;
         }
 
@@ -26,8 +26,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
             return new ExecuteCScriptAction
             {
-                OverriddenSourceDirectory = Util.Path2.GetDirectoryName(this.ctlScriptPath.Text),
-                ScriptPath = Util.Path2.GetFileName(this.ctlScriptPath.Text),
+                OverriddenSourceDirectory = PathEx.GetDirectoryName(this.ctlScriptPath.Text),
+                ScriptPath = PathEx.GetFileName(this.ctlScriptPath.Text),
                 Arguments = this.txtArguments.Text
             };
         }

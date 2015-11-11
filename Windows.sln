@@ -1,12 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Windows", "Windows.csproj", "{7C2AF59A-F1F4-4B83-82D1-E1DD3844E540}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{5DC54D65-CED0-4DFF-97C6-2E2693B0A595}"
-	ProjectSection(SolutionItems) = preProject
-		Lib\Microsoft.Web.Administration.dll = Lib\Microsoft.Web.Administration.dll
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

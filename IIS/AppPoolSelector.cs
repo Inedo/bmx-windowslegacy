@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Agents;
+using Inedo.BuildMaster.Web.Security;
 using Inedo.Web.ClientResources;
 using Inedo.Web.Controls;
 using Inedo.Web.Handlers;
@@ -54,7 +55,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 if (serverId <= 0)
                     return new object[0];
 
-                if (!Shims.CanPerformTask(20 /*Environments_ViewServer*/, serverId: serverId))
+                if (!WebUserContext.CanPerformTask(SecuredTask.Environments_ViewServer, serverId: serverId))
                     throw new SecurityException();
 
                 var serverInfo = StoredProcs.Environments_GetServer(serverId, 0).Execute().Servers.FirstOrDefault();
@@ -65,7 +66,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 {
                     var groupServer = StoredProcs.Environments_GetServersInGroup(serverId, Domains.YN.No)
                         .Execute()
-                        .FirstOrDefault(s => Shims.CanPerformTask(20 /*Environments_ViewServer*/, serverId: s.Server_Id));
+                        .FirstOrDefault(s => WebUserContext.CanPerformTask(SecuredTask.Environments_ViewServer, serverId: s.Server_Id));
 
                     if (groupServer == null)
                         return new object[0];
