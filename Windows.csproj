@@ -99,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionImporters\PSExecuteImporter.cs" />
     <Compile Include="IIS\AppPoolSelector.cs" />
     <Compile Include="IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
