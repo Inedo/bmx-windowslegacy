@@ -66,11 +66,11 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BuildMaster.Web.Controls, Version=4.9.0.46, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="BuildMaster.Web.Controls">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.9\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BuildMasterCore, Version=4.9.0.46, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="BuildMasterCore">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.9\lib\net40\BuildMasterCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -100,6 +100,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionImporters\PSExecuteImporter.cs" />
+    <Compile Include="ActionImporters\StartServiceImporter.cs" />
+    <Compile Include="ActionImporters\StopServiceImporter.cs" />
     <Compile Include="IIS\AppPoolSelector.cs" />
     <Compile Include="IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
@@ -120,7 +122,11 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="IIS\StartupIisAppAction.cs" />
+    <Compile Include="Operations\NotAnOperation.cs" />
     <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
+    <Compile Include="Operations\Services\ControlServiceJob.cs" />
+    <Compile Include="Operations\Services\StartServiceOperation.cs" />
+    <Compile Include="Operations\Services\StopServiceOperation.cs" />
     <Compile Include="PowerShell\BuildMasterPSHost.cs" />
     <Compile Include="PowerShell\BuildMasterPSHostRawUserInterface.cs" />
     <Compile Include="PowerShell\BuildMasterPSHostUserInterface.cs" />
@@ -205,6 +211,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

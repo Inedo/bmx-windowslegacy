@@ -86,8 +86,7 @@ psexec >>
         {
             return new ExtendedRichDescription(
                 new RichDescription(
-                    "Execute ",
-                    new Hilite("PowerShell")
+                    "Execute PowerShell script"
                 )
             );
         }

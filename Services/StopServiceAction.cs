@@ -3,6 +3,7 @@ using System.ServiceProcess;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
@@ -14,6 +15,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         "Stops a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StopServiceActionEditor))]
+    [ConvertibleToOperation(typeof(StopServiceImporter))]
     public sealed class StopServiceAction : RemoteActionBase
     {
         /// <summary>

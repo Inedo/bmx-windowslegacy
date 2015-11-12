@@ -1,9 +1,9 @@
 using System;
 using System.ServiceProcess;
-using System.Threading;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         "Starts a Windows Service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StartServiceActionEditor))]
+    [ConvertibleToOperation(typeof(StartServiceImporter))]
     public sealed class StartServiceAction : RemoteActionBase
     {
         /// <summary>
