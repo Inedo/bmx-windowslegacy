@@ -46,7 +46,7 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             {
                 if (IsLegalVariableName(var))
                 {
-                    var varValue = context.TryGetVariableValue(var);
+                    var varValue = context.TryGetVariableValue("${" + var + "}");
                     if (varValue != null)
                         results[var] = varValue.Value.AsString();
                 }
