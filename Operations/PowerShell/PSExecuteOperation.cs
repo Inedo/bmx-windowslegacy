@@ -86,7 +86,11 @@ psexec >>
         {
             return new ExtendedRichDescription(
                 new RichDescription(
-                    "Execute PowerShell script"
+                    "Execute ",
+                    new BuildMaster.Documentation.Hilite(config[nameof(this.ScriptText)])
+                ),
+                new RichDescription(
+                    "using Windows PowerShell"
                 )
             );
         }
