@@ -14,7 +14,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations
     [Description("Executes a specified PowerShell script.")]
     [ScriptAlias("Execute-PowerShell")]
     [ScriptAlias("PSExec")]
-    //[ScriptNamespace(Namespaces.PowerShell, PreferUnqualified = true)]
+    [ScriptNamespace("PowerShell", PreferUnqualified = true)]
     [DefaultProperty(nameof(ScriptText))]
     [Tag("powershell")]
     [Note("If you are attempting to write the results of a Format-* call to the log, you may see "

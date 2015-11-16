@@ -17,7 +17,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
     [Tag("services")]
     [Example(@"# starts the HDARS service on the remote server
 Start-Service HDARS;")]
-    //[ScriptNamespace(Namespaces.Windows, PreferUnqualified = true)]
+    [ScriptNamespace("Windows", PreferUnqualified = true)]
     public sealed class StartServiceOperation : ExecuteOperation
     {
         [ScriptAlias("Name")]

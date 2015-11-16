@@ -17,7 +17,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
     [Tag("services")]
     [Example(@"# stops the HDARS service on the remote server
 Stop-Service HDARS;")]
-    //[ScriptNamespace(Namespaces.Windows, PreferUnqualified = true)]
+    [ScriptNamespace("Windows", PreferUnqualified = true)]
     public sealed class StopServiceOperation : ExecuteOperation
     {
         [ScriptAlias("Name")]
