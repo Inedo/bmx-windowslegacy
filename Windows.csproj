@@ -78,7 +78,7 @@
       <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="InedoLib, Version=247.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+    <Reference Include="InedoLib">
       <HintPath>packages\Inedo.BuildMaster.SDK.4.9\lib\net40\InedoLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -221,8 +221,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster-4.9\ExtensionLib\$(TargetName).bmx"
-if exist $(SolutionDir) $(SolutionDir)..\zip -r $(SolutionDir)..\..\BuildMaster-4.9\ExtensionLib\$(TargetName).bmx *.*
+    <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
+if exist $(SolutionDir) $(SolutionDir)..\zip -r $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.*
 if exist $(TargetDir)Microsoft.Web.Administration.dll del $(TargetDir)Microsoft.Web.Administration.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>
