@@ -93,6 +93,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
+            // give service extra time for process to exit
+            Thread.Sleep(1000);
+
             this.LogInformation("Service is stopped.");
         }
 
