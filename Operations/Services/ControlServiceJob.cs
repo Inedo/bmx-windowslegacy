@@ -54,20 +54,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
         private void WaitForStartAsync(ServiceController service, CancellationToken cancellationToken)
         {
             ServiceControllerStatus status;
-            while ((status = service.Status) != ServiceControllerStatus.Stopped)
-            {
-                //await Task.Delay(100, cancellationToken);
-                Thread.Sleep(1000);
-                cancellationToken.ThrowIfCancellationRequested();
-                service.Refresh();
-            }
+            service.Refresh();
+            status = service.Status;
 
             this.LogDebug("Service status is " + status);
 
             while ((status = service.Status) != ServiceControllerStatus.Running && status != ServiceControllerStatus.Stopped)
             {
                 //await Task.Delay(100, cancellationToken);
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
                 cancellationToken.ThrowIfCancellationRequested();
                 service.Refresh();
             }
