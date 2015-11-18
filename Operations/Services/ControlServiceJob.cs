@@ -56,20 +56,20 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
             ServiceControllerStatus status;
             while ((status = service.Status) != ServiceControllerStatus.Stopped)
             {
-                service.Refresh();
                 //await Task.Delay(100, cancellationToken);
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 cancellationToken.ThrowIfCancellationRequested();
+                service.Refresh();
             }
 
             this.LogDebug("Service status is " + status);
 
             while ((status = service.Status) != ServiceControllerStatus.Running && status != ServiceControllerStatus.Stopped)
             {
-                service.Refresh();
                 //await Task.Delay(100, cancellationToken);
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 cancellationToken.ThrowIfCancellationRequested();
+                service.Refresh();
             }
 
             if (status == ServiceControllerStatus.Running)
