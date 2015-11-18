@@ -23,7 +23,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                     if (service.Status == ServiceControllerStatus.Running)
                     {
                         this.LogInformation("Service is already running.");
-                        return null;
+                        return (Task<object>)NotAnOperation.Complete;
                     }
 
                     service.Start();
@@ -35,7 +35,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                     if (service.Status == ServiceControllerStatus.Stopped)
                     {
                         this.LogInformation("Service is already stopped.");
-                        return null;
+                        return (Task<object>)NotAnOperation.Complete;
                     }
 
                     service.Stop();
