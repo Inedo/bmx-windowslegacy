@@ -48,7 +48,15 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
                 {
                     var varValue = context.TryGetVariableValue("${" + var + "}");
                     if (varValue != null)
+                    {
                         results[var] = varValue.Value.AsString();
+                    }
+                    else
+                    {
+                        varValue = context.TryGetFunctionValue("${" + var + "}");
+                        if (varValue != null)
+                            results[var] = varValue.Value.AsString();
+                    }
                 }
             }
 
