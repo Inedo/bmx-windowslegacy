@@ -1,4 +1,5 @@
-﻿using Inedo.BuildMaster.Extensibility.Actions;
+﻿using System.Web.UI.WebControls;
+using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 
@@ -12,6 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private ValidatingTextBox txtPort;
         private ValidatingTextBox txtHostName;
         private ValidatingTextBox txtIPAddress;
+        private CheckBoxList chkBoxlistOmitAction;
 
         public override void BindToForm(ActionBase extension)
         {
@@ -23,10 +25,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtPort.Text = action.Port;
             this.txtHostName.Text = action.HostName;
             this.txtIPAddress.Text = action.IPAddress;
+            chkBoxlistOmitAction.SelectedValue = action.OmitActionIfWebSiteExists.ToString().ToLower();
         }
 
         public override ActionBase CreateFromForm()
         {
+            var omitIfWebsiteExist = chkBoxlistOmitAction.Items.FindByText("if web site already exist.")?.Selected ?? false;
+
             return new CreateIisWebSiteAction()
             {
                 Name = this.txtName.Text,
@@ -34,7 +39,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 ApplicationPool = this.txtApplicationPoolName.Text,
                 Port = this.txtPort.Text,
                 HostName = this.txtHostName.Text,
-                IPAddress = this.txtIPAddress.Text
+                IPAddress = this.txtIPAddress.Text,
+                OmitActionIfWebSiteExists = omitIfWebsiteExist,
             };
         }
 
@@ -46,6 +52,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtPort = new ValidatingTextBox { DefaultText = "80" };
             this.txtHostName = new ValidatingTextBox { DefaultText = "any" };
             this.txtIPAddress = new ValidatingTextBox { DefaultText = "All unassigned" };
+            chkBoxlistOmitAction = new CheckBoxList
+            {
+                Items =
+                {
+                    new ListItem("if web site already exist.","true"),
+                }
+            };
 
             this.Controls.Add(
                 new SlimFormField(
@@ -71,7 +84,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 new SlimFormField(
                     "IP address:",
                     this.txtIPAddress
-                )
+                ),
+                new SlimFormField(
+                    "Omit action:",
+                    chkBoxlistOmitAction
+                    )
             );
         }
     }

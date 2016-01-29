@@ -136,11 +136,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             /// <returns>True if the AppPool already exists else false</returns>
             public override bool AppPoolExists(string appPoolName)
             {
-                using (var manager = new ServerManager())
-                {
-                    var pool = manager.ApplicationPools[appPoolName];
-                    return pool != null;
-                }
+                return GetAppPoolNames().Any(poolName => poolName.Equals(appPoolName));
             }
 
             public override void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding)
@@ -162,8 +158,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             {
                 using (var manager = new ServerManager())
                 {
-                    var site = manager.Sites.SingleOrDefault(s => s.Name.Equals(name));
-                    return site != null;
+                    return manager.Sites.Any(site => site.Name.Equals(name));
                 }
             }
 

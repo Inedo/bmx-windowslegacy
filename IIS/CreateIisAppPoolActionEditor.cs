@@ -21,8 +21,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private PasswordTextBox txtPassword;
         private Div divUser;
         private RadioButtonList rblIntegrated;
-        private RadioButtonList rdbOmitActionIfPoolExists;
+        private RadioButtonList rdlOmitActionIfPoolExists;
         private DropDownList ddlManagedRuntimeVersion;
+        private CheckBoxList chkBoxlistOmitAction;
 
         public override void BindToForm(ActionBase extension)
         {
@@ -43,18 +44,20 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
             rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
             ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
-            rdbOmitActionIfPoolExists.SelectedValue = action.OmitActionIfPoolExists.ToString().ToLower();
+            chkBoxlistOmitAction.SelectedValue = action.OmitActionIfPoolExists.ToString().ToLower();
         }
 
         public override ActionBase CreateFromForm()
         {
+            var omitIfAppPoolExist = chkBoxlistOmitAction.Items.FindByText("if App Pool already exist.")?.Selected ?? false;
             return new CreateIisAppPoolAction()
             {
                 Name = txtName.Text,
                 User = ddlUser.SelectedValue == "custom" ? txtUser.Text : ddlUser.SelectedValue,
                 Password = ddlUser.SelectedValue == "custom" ? txtPassword.Text : "",
                 IntegratedMode = bool.Parse(rblIntegrated.SelectedValue),
-                ManagedRuntimeVersion = ddlManagedRuntimeVersion.SelectedValue
+                ManagedRuntimeVersion = ddlManagedRuntimeVersion.SelectedValue,
+                OmitActionIfPoolExists = omitIfAppPoolExist
             };
         }
 
@@ -111,6 +114,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
+            chkBoxlistOmitAction = new CheckBoxList
+            {
+                Items =
+                {
+                    new ListItem("if App Pool already exist.","true"),
+                }
+            };
+
+
             Controls.Add(
                 new SlimFormField(
                     "Application pool name:",
@@ -128,16 +140,12 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 new SlimFormField(
                     "Managed runtime version:",
                     ddlManagedRuntimeVersion
+                    ),
+                new SlimFormField(
+                    "Omit action:",
+                    chkBoxlistOmitAction
                     )
                 );
-
-            rdbOmitActionIfPoolExists = new RadioButtonList
-            {
-                Items =
-                {
-                    new ListItem("Omit action if pool already exists", "true"),
-                }
-            };
         }
 
         private RenderJQueryDocReadyDelegator GetClientSideScript(string ddlUserId, string divUserId)

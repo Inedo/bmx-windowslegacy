@@ -76,17 +76,21 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
+           
             LogDebug("User: " + User);
             LogDebug("Pipeline: {0} ({1})", ManagedRuntimeVersion, IntegratedMode ? "integrated" : "classic");
+            LogDebug("Omit action if pool exists: {0}", OmitActionIfPoolExists);
             if (OmitActionIfPoolExists)
             {
-                if (!IISUtil.Instance.AppPoolExists(name))
+                LogDebug("Checking for pool with name: {0}", Name);
+                if (IISUtil.Instance.AppPoolExists(Name))
                 {
                     LogDebug(
                         "IIS Application Pool with name: {0} already exists. The Application Pool creation is omitted",
-                        name);
+                        Name);
                     return null;
                 }
+                LogDebug("IIS did not contain an App pool named {0}. Action is not omitted", Name);
             }
             IISUtil.Instance.CreateAppPool(Name, User, Password, IntegratedMode, ManagedRuntimeVersion);
 

@@ -49,6 +49,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public string IPAddress { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the action should be ignored if the Web Site aready exists.
+        /// </summary>
+        [Persistent]
+        public bool OmitActionIfWebSiteExists { get; set; }
+
         public override ActionDescription GetActionDescription()
         {
             return new ActionDescription(
@@ -72,6 +79,20 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         {
             this.LogDebug("Physical Path: {0}", this.PhysicalPath);
             this.LogDebug("App Pool: {0}", this.ApplicationPool);
+            LogDebug("Omit action if Web site exists: {0}", OmitActionIfWebSiteExists);
+
+            if (OmitActionIfWebSiteExists)
+            {
+                LogDebug("Checking for Web site with name: {0}", Name);
+                if (IISUtil.Instance.WebSiteExists(Name))
+                {
+                    LogDebug(
+                        "IIS Web site with name: {0} already exists. The Web site creation is omitted",
+                        Name);
+                    return Domains.YN.Yes;
+                }
+                LogDebug("IIS did not contain a Web site named {0}. Action is not omitted", Name);
+            }
 
             int port = string.IsNullOrEmpty(this.Port) ? 80 : InedoLib.Util.Int.ParseZ(this.Port);
             if (port < 1 || port > ushort.MaxValue)
