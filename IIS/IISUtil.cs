@@ -72,6 +72,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         /// <param name="integratedMode">If true, sets the app pool mode to integrated.</param>
         /// <param name="managedRuntimeVersion">The version of .NET hosting the app pool.</param>
         public abstract void CreateAppPool(string name, string user, string password, bool integratedMode, string managedRuntimeVersion);
+
+        /// <summary>
+        /// Check if an IIS Application Pool of name <paramref name="appPoolName"/> exists.
+        /// </summary>
+        /// <param name="appPoolName">The name of the IIS Application Pool to look for</param>
+        /// <returns>True if the AppPool already exists else false</returns>
+        public abstract bool AppPoolExists(string appPoolName);
+
+
         /// <summary>
         /// Creates a new website.
         /// </summary>
@@ -81,6 +90,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         /// <param name="https">Binds to HTTPS instead of HTTP</param>
         /// <param name="binding">The port, hostname, and IP of the website.</param>
         public abstract void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding);
+
+        /// <summary>
+        /// Check if an IIS hosted website of name <paramref name="name"/> exists.
+        /// </summary>
+        /// <param name="name">The name of the website to look for in the IIS</param>
+        /// <returns>True if website already exists else false</returns>
+        public abstract bool WebSiteExists(string name);
+
+
 
         /// <summary>
         /// Returns a new instances of the newest supported IIS management interface.

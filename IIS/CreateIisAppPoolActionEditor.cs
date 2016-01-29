@@ -21,51 +21,54 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private PasswordTextBox txtPassword;
         private Div divUser;
         private RadioButtonList rblIntegrated;
+        private RadioButtonList rdbOmitActionIfPoolExists;
         private DropDownList ddlManagedRuntimeVersion;
 
         public override void BindToForm(ActionBase extension)
         {
-            var action = (CreateIisAppPoolAction)extension;
+            var action = (CreateIisAppPoolAction) extension;
 
-            this.txtName.Text = action.Name;
-            if (new[] { "LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity" }.Contains(action.User, StringComparer.OrdinalIgnoreCase))
+            txtName.Text = action.Name;
+            if (new[] {"LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity"}.Contains(
+                action.User, StringComparer.OrdinalIgnoreCase))
             {
-                this.ddlUser.SelectedValue = action.User;
+                ddlUser.SelectedValue = action.User;
             }
             else
             {
-                this.ddlUser.SelectedValue = "custom";
-                this.txtUser.Text = action.User;
-                this.txtPassword.Text = action.Password;
+                ddlUser.SelectedValue = "custom";
+                txtUser.Text = action.User;
+                txtPassword.Text = action.Password;
             }
 
-            this.rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
-            this.ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
+            rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
+            ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
+            rdbOmitActionIfPoolExists.SelectedValue = action.OmitActionIfPoolExists.ToString().ToLower();
         }
 
         public override ActionBase CreateFromForm()
         {
             return new CreateIisAppPoolAction()
             {
-                Name = this.txtName.Text,
-                User = this.ddlUser.SelectedValue == "custom" ? this.txtUser.Text : this.ddlUser.SelectedValue,
-                Password = this.ddlUser.SelectedValue == "custom" ? this.txtPassword.Text : "",
-                IntegratedMode = bool.Parse(this.rblIntegrated.SelectedValue),
-                ManagedRuntimeVersion = this.ddlManagedRuntimeVersion.SelectedValue
+                Name = txtName.Text,
+                User = ddlUser.SelectedValue == "custom" ? txtUser.Text : ddlUser.SelectedValue,
+                Password = ddlUser.SelectedValue == "custom" ? txtPassword.Text : "",
+                IntegratedMode = bool.Parse(rblIntegrated.SelectedValue),
+                ManagedRuntimeVersion = ddlManagedRuntimeVersion.SelectedValue
             };
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            this.Controls.Add(GetClientSideScript(this.ddlUser.ClientID, this.divUser.ClientID));
+            Controls.Add(GetClientSideScript(ddlUser.ClientID, divUser.ClientID));
 
             base.OnPreRender(e);
         }
 
         protected override void CreateChildControls()
         {
-            this.txtName = new ValidatingTextBox { Required = true };
-            this.ddlUser = new DropDownList
+            txtName = new ValidatingTextBox {Required = true};
+            ddlUser = new DropDownList
             {
                 Items =
                 {
@@ -77,29 +80,29 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            this.txtUser = new ValidatingTextBox();
-            this.txtPassword = new PasswordTextBox();
+            txtUser = new ValidatingTextBox();
+            txtPassword = new PasswordTextBox();
 
-            this.divUser = new Div
-            { 
-                Controls = 
-                { 
-                    new LiteralControl("<br />"),
-                    new StandardFormField("User Name:", this.txtUser), 
-                    new StandardFormField("Password:", this.txtPassword)
-                } 
-            };
-
-            this.rblIntegrated = new RadioButtonList
+            divUser = new Div
             {
-                Items = 
-                { 
-                    new ListItem("Integrated Mode", "true"),
-                    new ListItem("Classic Mode", "false") 
+                Controls =
+                {
+                    new LiteralControl("<br />"),
+                    new StandardFormField("User Name:", txtUser),
+                    new StandardFormField("Password:", txtPassword)
                 }
             };
 
-            this.ddlManagedRuntimeVersion = new DropDownList
+            rblIntegrated = new RadioButtonList
+            {
+                Items =
+                {
+                    new ListItem("Integrated Mode", "true"),
+                    new ListItem("Classic Mode", "false")
+                }
+            };
+
+            ddlManagedRuntimeVersion = new DropDownList
             {
                 Items =
                 {
@@ -108,25 +111,33 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            this.Controls.Add(
+            Controls.Add(
                 new SlimFormField(
                     "Application pool name:",
-                    this.txtName
-                ),
+                    txtName
+                    ),
                 new SlimFormField(
                     "User identity:",
-                    this.ddlUser,
-                    this.divUser
-                ),
+                    ddlUser,
+                    divUser
+                    ),
                 new SlimFormField(
                     "Managed pipeline mode:",
-                    this.rblIntegrated
-                ),
+                    rblIntegrated
+                    ),
                 new SlimFormField(
                     "Managed runtime version:",
-                    this.ddlManagedRuntimeVersion
-                )
-            );
+                    ddlManagedRuntimeVersion
+                    )
+                );
+
+            rdbOmitActionIfPoolExists = new RadioButtonList
+            {
+                Items =
+                {
+                    new ListItem("Omit action if pool already exists", "true"),
+                }
+            };
         }
 
         private RenderJQueryDocReadyDelegator GetClientSideScript(string ddlUserId, string divUserId)
@@ -136,22 +147,21 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     "var onload = $('#" + ddlUserId + "').find('option').filter(':selected').val();" +
                     "if(onload == 'custom')" +
                     "{" +
-                        "$('#" + divUserId + "').show();" +
+                    "$('#" + divUserId + "').show();" +
                     "}" +
-
                     "$('#" + ddlUserId + "').change(function () {" +
-                        "var selectedConfig = $(this).find('option').filter(':selected').val();" +
-                        "if(selectedConfig == 'custom')" +
-                        "{" +
-                            "$('#" + divUserId + "').show();" +
-                        "}" +
-                        "else" +
-                        "{" +
-                            "$('#" + divUserId + "').hide();" +
-                        "}" +
+                    "var selectedConfig = $(this).find('option').filter(':selected').val();" +
+                    "if(selectedConfig == 'custom')" +
+                    "{" +
+                    "$('#" + divUserId + "').show();" +
+                    "}" +
+                    "else" +
+                    "{" +
+                    "$('#" + divUserId + "').hide();" +
+                    "}" +
                     "}).change();"
-                )
-            );
+                    )
+                );
         }
     }
 }

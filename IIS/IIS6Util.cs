@@ -62,7 +62,27 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 throw new NotSupportedException();
             }
 
+            /// <summary>
+            /// Check if an IIS Application Pool of name <paramref name="appPoolName"/> exists.
+            /// </summary>
+            /// <param name="appPoolName">The name of the IIS Application Pool to look for</param>
+            /// <returns>True if the AppPool already exists else false</returns>
+            public override bool AppPoolExists(string appPoolName)
+            {
+                throw new NotSupportedException();
+            }
+
             public override void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding)
+            {
+                throw new NotSupportedException();
+            }
+
+            /// <summary>
+            /// Check if an IIS hosted website of name <paramref name="name"/> exists.
+            /// </summary>
+            /// <param name="name">The name of the website to look for in the IIS</param>
+            /// <returns>True if website already exists else false</returns>
+            public override bool WebSiteExists(string name)
             {
                 throw new NotSupportedException();
             }
