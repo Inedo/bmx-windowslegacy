@@ -50,7 +50,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtPort = new ValidatingTextBox { DefaultText = "80" };
             this.txtHostName = new ValidatingTextBox { DefaultText = "any" };
             this.txtIPAddress = new ValidatingTextBox { DefaultText = "All unassigned" };
-            this.chkSkipIfSiteExists = new CheckBox { Text = "Skip if web site already exists", Checked = true }
+            this.chkSkipIfSiteExists = new CheckBox { Text = "Skip if web site already exists", Checked = true };
             
             this.Controls.Add(
                 new SlimFormField(
