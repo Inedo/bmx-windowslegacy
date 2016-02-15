@@ -1,5 +1,4 @@
 ﻿using Inedo.BuildMaster;
-using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
 
@@ -49,7 +48,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public string IPAddress { get; set; }
 
-
         /// <summary>
         /// Gets or sets a value indicating whether the action should be ignored if the Web Site aready exists.
         /// </summary>
@@ -77,28 +75,25 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-            this.LogDebug("Physical Path: {0}", this.PhysicalPath);
-            this.LogDebug("App Pool: {0}", this.ApplicationPool);
-            LogDebug("Omit action if Web site exists: {0}", OmitActionIfWebSiteExists);
+            this.LogDebug("Physical path: {0}", this.PhysicalPath);
+            this.LogDebug("Application pool: {0}", this.ApplicationPool);
 
-            if (OmitActionIfWebSiteExists)
+            if (this.OmitActionIfWebSiteExists)
             {
-                LogDebug("Checking for Web site with name: {0}", Name);
-                if (IISUtil.Instance.WebSiteExists(Name))
+                this.LogDebug($"Checking for existing web site with name: {this.Name}");
+                if (IISUtil.Instance.WebSiteExists(this.Name))
                 {
-                    LogDebug(
-                        "IIS Web site with name: {0} already exists. The Web site creation is omitted",
-                        Name);
-                    return Domains.YN.Yes;
+                    this.LogInformation($"IIS web site {this.Name} already exists, skipping.");
+                    return null;
                 }
-                LogDebug("IIS did not contain a Web site named {0}. Action is not omitted", Name);
+                this.LogDebug($"IIS did not contain a web site named {this.Name}, creating...");
             }
 
             int port = string.IsNullOrEmpty(this.Port) ? 80 : InedoLib.Util.Int.ParseZ(this.Port);
             if (port < 1 || port > ushort.MaxValue)
             {
-                this.LogError("The specified port ({0}) does not resolve to a valid port number.", this.Port);
-                return Domains.YN.No;
+                this.LogError($"The specified port ({this.Port}) does not resolve to a valid port number.");
+                return null;
             }
 
             var bindingInfo = new IISUtil.BindingInfo(this.HostName, port, this.IPAddress);
@@ -112,14 +107,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 bindingInfo
             );
 
-            return Domains.YN.Yes;
+            this.LogInformation($"{this.Name} web site created.");
+
+            return null;
         }
 
         protected override void Execute()
         {
-            this.LogDebug("Creating IIS web site {0}...", this.Name);
-            if (this.ExecuteRemoteCommand(null) == Domains.YN.Yes)
-                this.LogInformation("{0} web site created.", this.Name);
+            this.LogInformation($"Creating IIS web site {this.Name}...");
+            this.ExecuteRemoteCommand(null);
         }
     }
 }

@@ -77,6 +77,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         {
             this.LogDebug("User: " + this.User);
             this.LogDebug("Pipeline: {0} ({1})", this.ManagedRuntimeVersion, this.IntegratedMode ? "integrated" : "classic");
+
             if (this.OmitActionIfPoolExists)
             {
                 this.LogDebug($"Checking for existing application pool with name: {this.Name}");

@@ -13,7 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private ValidatingTextBox txtPort;
         private ValidatingTextBox txtHostName;
         private ValidatingTextBox txtIPAddress;
-        private CheckBoxList chkBoxlistOmitAction;
+        private CheckBox chkSkipIfSiteExists;
 
         public override void BindToForm(ActionBase extension)
         {
@@ -25,13 +25,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtPort.Text = action.Port;
             this.txtHostName.Text = action.HostName;
             this.txtIPAddress.Text = action.IPAddress;
-            chkBoxlistOmitAction.SelectedValue = action.OmitActionIfWebSiteExists.ToString().ToLower();
+            this.chkSkipIfSiteExists.Checked = action.OmitActionIfWebSiteExists;
         }
 
         public override ActionBase CreateFromForm()
         {
-            var omitIfWebsiteExist = chkBoxlistOmitAction.Items.FindByText("if web site already exist.")?.Selected ?? false;
-
             return new CreateIisWebSiteAction()
             {
                 Name = this.txtName.Text,
@@ -40,7 +38,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 Port = this.txtPort.Text,
                 HostName = this.txtHostName.Text,
                 IPAddress = this.txtIPAddress.Text,
-                OmitActionIfWebSiteExists = omitIfWebsiteExist,
+                OmitActionIfWebSiteExists = this.chkSkipIfSiteExists.Checked,
             };
         }
 
@@ -52,14 +50,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtPort = new ValidatingTextBox { DefaultText = "80" };
             this.txtHostName = new ValidatingTextBox { DefaultText = "any" };
             this.txtIPAddress = new ValidatingTextBox { DefaultText = "All unassigned" };
-            chkBoxlistOmitAction = new CheckBoxList
-            {
-                Items =
-                {
-                    new ListItem("if web site already exist.","true"),
-                }
-            };
-
+            this.chkSkipIfSiteExists = new CheckBox { Text = "Skip if web site already exists", Checked = true }
+            
             this.Controls.Add(
                 new SlimFormField(
                     "Web site name:",
@@ -86,9 +78,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     this.txtIPAddress
                 ),
                 new SlimFormField(
-                    "Omit action:",
-                    chkBoxlistOmitAction
-                    )
+                    "Options:",
+                    this.chkSkipIfSiteExists
+                )
             );
         }
     }
