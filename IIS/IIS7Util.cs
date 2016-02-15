@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Inedo.Diagnostics;
 using Microsoft.Web.Administration;
@@ -33,6 +34,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                         yield return pool.Name;
                 }
             }
+
             /// <summary>
             /// Starts an AppPool on the local system.
             /// </summary>
@@ -55,6 +57,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     }
                 }
             }
+
             /// <summary>
             /// Stops an AppPool on the local system.
             /// </summary>
@@ -71,12 +74,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     {
                         pool.Stop();
                     }
-                    catch (COMException ex)
+                    catch (COMException ex) when ((uint)ex.ErrorCode == 0x80070426)
                     {
-                        if ((uint)ex.ErrorCode == 0x80070426)
-                            throw new IISException("Application pool is already stopped.", ex, MessageLevel.Information);
-                        else
-                            throw new IISException("Could not stop application pool: " + ex.Message);
+                        throw new IISException("Application pool is already stopped.", ex, MessageLevel.Information);
                     }
                     catch (Exception ex)
                     {
@@ -85,12 +85,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             }
 
-            public override void CreateAppPool(string name, string user, string password, bool integratedMode, string managedRuntimeVersion)
+            public override void CreateAppPool(string name, string user, string password, bool integratedMode,
+                string managedRuntimeVersion)
             {
                 using (var manager = new ServerManager())
                 {
                     var appPool = manager.ApplicationPools.Add(name);
-                    appPool.ManagedPipelineMode = integratedMode ? ManagedPipelineMode.Integrated : ManagedPipelineMode.Classic;
+                    appPool.ManagedPipelineMode = integratedMode
+                        ? ManagedPipelineMode.Integrated
+                        : ManagedPipelineMode.Classic;
                     appPool.ManagedRuntimeVersion = managedRuntimeVersion;
 
                     switch (user)
@@ -123,6 +126,16 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             }
 
+            /// <summary>
+            /// Check if an IIS Application Pool of name <paramref name="appPoolName"/> exists.
+            /// </summary>
+            /// <param name="appPoolName">The name of the IIS Application Pool to look for</param>
+            /// <returns>True if the AppPool already exists else false</returns>
+            public override bool AppPoolExists(string appPoolName)
+            {
+                return this.GetAppPoolNames().Any(a => string.Equals(a, appPoolName, StringComparison.OrdinalIgnoreCase));
+            }
+
             public override void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding)
             {
                 using (var manager = new ServerManager())
@@ -130,6 +143,19 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     var site = manager.Sites.Add(name, https ? "https" : "http", binding.ToString(), path);
                     site.ApplicationDefaults.ApplicationPoolName = appPool;
                     manager.CommitChanges();
+                }
+            }
+
+            /// <summary>
+            /// Check if an IIS hosted website of name <paramref name="name"/> exists.
+            /// </summary>
+            /// <param name="name">The name of the website to look for in the IIS</param>
+            /// <returns>True if website already exists else false</returns>
+            public override bool WebSiteExists(string name)
+            {
+                using (var manager = new ServerManager())
+                {
+                    return manager.Sites.Any(site => site.Name.Equals(name));
                 }
             }
 

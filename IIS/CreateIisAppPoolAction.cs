@@ -5,8 +5,8 @@ using Inedo.BuildMaster.Web;
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
     [ActionProperties(
-       "Create IIS 7+ App Pool",
-       "Creates an application pool in IIS 7 or later.")]
+        "Create IIS 7+ App Pool",
+        "Creates an application pool in IIS 7 or later.")]
     [Tag(Tags.Windows)]
     [Tag("iis")]
     [CustomEditor(typeof(CreateIisAppPoolActionEditor))]
@@ -43,6 +43,12 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public string ManagedRuntimeVersion { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the action should be ignored if the App Pool aready exists.
+        /// </summary>
+        [Persistent]
+        public bool OmitActionIfPoolExists { get; set; }
+
         public override ActionDescription GetActionDescription()
         {
             return new ActionDescription(
@@ -63,9 +69,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
         protected override void Execute()
         {
-            this.LogDebug("Creating application pool {0}...", this.Name);
+            this.LogDebug($"Creating application pool {this.Name}...");
             this.ExecuteRemoteCommand(null);
-            this.LogInformation("{0} application pool created.", this.Name);
         }
 
         protected override string ProcessRemoteCommand(string name, string[] args)
@@ -73,7 +78,23 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.LogDebug("User: " + this.User);
             this.LogDebug("Pipeline: {0} ({1})", this.ManagedRuntimeVersion, this.IntegratedMode ? "integrated" : "classic");
 
+            if (this.OmitActionIfPoolExists)
+            {
+                this.LogDebug($"Checking for existing application pool with name: {this.Name}");
+                if (IISUtil.Instance.AppPoolExists(this.Name))
+                {
+                    this.LogInformation($"IIS application pool \"{this.Name}\" already exists, skipping.");
+                    return null;
+                }
+                else
+                {
+                    this.LogDebug($"IIS did not contain an application pool named {this.Name}, creating...");
+                }
+            }
+
             IISUtil.Instance.CreateAppPool(this.Name, this.User, this.Password, this.IntegratedMode, this.ManagedRuntimeVersion);
+            this.LogInformation($"{this.Name} application pool created.");
+
             return null;
         }
     }
