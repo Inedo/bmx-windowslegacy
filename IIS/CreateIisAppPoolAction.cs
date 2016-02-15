@@ -9,7 +9,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         "Creates an application pool in IIS 7 or later.")]
     [Tag(Tags.Windows)]
     [Tag("iis")]
-    [CustomEditor(typeof (CreateIisAppPoolActionEditor))]
+    [CustomEditor(typeof(CreateIisAppPoolActionEditor))]
     public sealed class CreateIisAppPoolAction : RemoteActionBase
     {
         /// <summary>
@@ -54,45 +54,45 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             return new ActionDescription(
                 new ShortActionDescription(
                     "Create ",
-                    new Hilite(Name),
+                    new Hilite(this.Name),
                     " IIS Application Pool"
-                    ),
+                ),
                 new LongActionDescription(
                     "for ",
-                    new Hilite(".NET " + ManagedRuntimeVersion),
+                    new Hilite(".NET " + this.ManagedRuntimeVersion),
                     ", ",
-                    new Hilite(IntegratedMode ? "integrated" : "classic"),
+                    new Hilite(this.IntegratedMode ? "integrated" : "classic"),
                     " pipeline"
-                    )
-                );
+                )
+            );
         }
 
         protected override void Execute()
         {
-            LogDebug("Creating application pool {0}...", Name);
-            ExecuteRemoteCommand(null);
-            LogInformation("{0} application pool created.", Name);
+            this.LogDebug($"Creating application pool {this.Name}...");
+            this.ExecuteRemoteCommand(null);
         }
 
         protected override string ProcessRemoteCommand(string name, string[] args)
         {
-           
-            LogDebug("User: " + User);
-            LogDebug("Pipeline: {0} ({1})", ManagedRuntimeVersion, IntegratedMode ? "integrated" : "classic");
-            LogDebug("Omit action if pool exists: {0}", OmitActionIfPoolExists);
-            if (OmitActionIfPoolExists)
+            this.LogDebug("User: " + this.User);
+            this.LogDebug("Pipeline: {0} ({1})", this.ManagedRuntimeVersion, this.IntegratedMode ? "integrated" : "classic");
+            if (this.OmitActionIfPoolExists)
             {
-                LogDebug("Checking for pool with name: {0}", Name);
-                if (IISUtil.Instance.AppPoolExists(Name))
+                this.LogDebug($"Checking for existing application pool with name: {this.Name}");
+                if (IISUtil.Instance.AppPoolExists(this.Name))
                 {
-                    LogDebug(
-                        "IIS Application Pool with name: {0} already exists. The Application Pool creation is omitted",
-                        Name);
+                    this.LogInformation($"IIS application pool \"{this.Name}\" already exists, skipping.");
                     return null;
                 }
-                LogDebug("IIS did not contain an App pool named {0}. Action is not omitted", Name);
+                else
+                {
+                    this.LogDebug($"IIS did not contain an application pool named {this.Name}, creating...");
+                }
             }
-            IISUtil.Instance.CreateAppPool(Name, User, Password, IntegratedMode, ManagedRuntimeVersion);
+
+            IISUtil.Instance.CreateAppPool(this.Name, this.User, this.Password, this.IntegratedMode, this.ManagedRuntimeVersion);
+            this.LogInformation($"{this.Name} application pool created.");
 
             return null;
         }

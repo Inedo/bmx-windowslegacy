@@ -74,12 +74,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     {
                         pool.Stop();
                     }
-                    catch (COMException ex)
+                    catch (COMException ex) when ((uint)ex.ErrorCode == 0x80070426)
                     {
-                        if ((uint) ex.ErrorCode == 0x80070426)
-                            throw new IISException("Application pool is already stopped.", ex, MessageLevel.Information);
-                        else
-                            throw new IISException("Could not stop application pool: " + ex.Message);
+                        throw new IISException("Application pool is already stopped.", ex, MessageLevel.Information);
                     }
                     catch (Exception ex)
                     {
@@ -136,7 +133,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             /// <returns>True if the AppPool already exists else false</returns>
             public override bool AppPoolExists(string appPoolName)
             {
-                return GetAppPoolNames().Any(poolName => poolName.Equals(appPoolName));
+                return this.GetAppPoolNames().Any(a => string.Equals(a, appPoolName, StringComparison.OrdinalIgnoreCase));
             }
 
             public override void CreateWebSite(string name, string path, string appPool, bool https, BindingInfo binding)

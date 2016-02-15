@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
@@ -21,57 +19,55 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private PasswordTextBox txtPassword;
         private Div divUser;
         private RadioButtonList rblIntegrated;
-        private RadioButtonList rdlOmitActionIfPoolExists;
         private DropDownList ddlManagedRuntimeVersion;
-        private CheckBoxList chkBoxlistOmitAction;
+        private CheckBox chkSkipIfAppPoolExists;
 
         public override void BindToForm(ActionBase extension)
         {
-            var action = (CreateIisAppPoolAction) extension;
+            var action = (CreateIisAppPoolAction)extension;
 
-            txtName.Text = action.Name;
-            if (new[] {"LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity"}.Contains(
+            this.txtName.Text = action.Name;
+            if (new[] { "LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity" }.Contains(
                 action.User, StringComparer.OrdinalIgnoreCase))
             {
-                ddlUser.SelectedValue = action.User;
+                this.ddlUser.SelectedValue = action.User;
             }
             else
             {
-                ddlUser.SelectedValue = "custom";
-                txtUser.Text = action.User;
-                txtPassword.Text = action.Password;
+                this.ddlUser.SelectedValue = "custom";
+                this.txtUser.Text = action.User;
+                this.txtPassword.Text = action.Password;
             }
 
-            rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
-            ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
-            chkBoxlistOmitAction.SelectedValue = action.OmitActionIfPoolExists.ToString().ToLower();
+            this.rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
+            this.ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
+            this.chkSkipIfAppPoolExists.Checked = action.OmitActionIfPoolExists;
         }
 
         public override ActionBase CreateFromForm()
         {
-            var omitIfAppPoolExist = chkBoxlistOmitAction.Items.FindByText("if App Pool already exist.")?.Selected ?? false;
             return new CreateIisAppPoolAction()
             {
-                Name = txtName.Text,
-                User = ddlUser.SelectedValue == "custom" ? txtUser.Text : ddlUser.SelectedValue,
-                Password = ddlUser.SelectedValue == "custom" ? txtPassword.Text : "",
-                IntegratedMode = bool.Parse(rblIntegrated.SelectedValue),
-                ManagedRuntimeVersion = ddlManagedRuntimeVersion.SelectedValue,
-                OmitActionIfPoolExists = omitIfAppPoolExist
+                Name = this.txtName.Text,
+                User = this.ddlUser.SelectedValue == "custom" ? this.txtUser.Text : this.ddlUser.SelectedValue,
+                Password = this.ddlUser.SelectedValue == "custom" ? this.txtPassword.Text : "",
+                IntegratedMode = bool.Parse(this.rblIntegrated.SelectedValue),
+                ManagedRuntimeVersion = this.ddlManagedRuntimeVersion.SelectedValue,
+                OmitActionIfPoolExists = this.chkSkipIfAppPoolExists.Checked
             };
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            Controls.Add(GetClientSideScript(ddlUser.ClientID, divUser.ClientID));
+            this.Controls.Add(this.GetClientSideScript(this.ddlUser.ClientID, this.divUser.ClientID));
 
             base.OnPreRender(e);
         }
 
         protected override void CreateChildControls()
         {
-            txtName = new ValidatingTextBox {Required = true};
-            ddlUser = new DropDownList
+            this.txtName = new ValidatingTextBox { Required = true };
+            this.ddlUser = new DropDownList
             {
                 Items =
                 {
@@ -83,20 +79,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            txtUser = new ValidatingTextBox();
-            txtPassword = new PasswordTextBox();
+            this.txtUser = new ValidatingTextBox();
+            this.txtPassword = new PasswordTextBox();
 
-            divUser = new Div
-            {
-                Controls =
-                {
-                    new LiteralControl("<br />"),
-                    new StandardFormField("User Name:", txtUser),
-                    new StandardFormField("Password:", txtPassword)
-                }
-            };
+            this.divUser = new Div(
+                new SlimFormField("User name:", this.txtUser), 
+                new SlimFormField("Password:", this.txtPassword)
+            );
 
-            rblIntegrated = new RadioButtonList
+            this.rblIntegrated = new RadioButtonList
             {
                 Items =
                 {
@@ -105,7 +96,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            ddlManagedRuntimeVersion = new DropDownList
+            this.ddlManagedRuntimeVersion = new DropDownList
             {
                 Items =
                 {
@@ -114,38 +105,31 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            chkBoxlistOmitAction = new CheckBoxList
-            {
-                Items =
-                {
-                    new ListItem("if App Pool already exist.","true"),
-                }
-            };
+            this.chkSkipIfAppPoolExists = new CheckBox() { Text = "Skip if application pool already exists", Checked = true };
 
-
-            Controls.Add(
+            this.Controls.Add(
                 new SlimFormField(
                     "Application pool name:",
-                    txtName
-                    ),
+                    this.txtName
+                ),
                 new SlimFormField(
                     "User identity:",
-                    ddlUser,
-                    divUser
-                    ),
+                    this.ddlUser
+                ),
+                this.divUser,
                 new SlimFormField(
                     "Managed pipeline mode:",
-                    rblIntegrated
-                    ),
+                    this.rblIntegrated
+                ),
                 new SlimFormField(
                     "Managed runtime version:",
-                    ddlManagedRuntimeVersion
-                    ),
+                    this.ddlManagedRuntimeVersion
+                ),
                 new SlimFormField(
-                    "Omit action:",
-                    chkBoxlistOmitAction
-                    )
-                );
+                    "Options:",
+                    this.chkSkipIfAppPoolExists
+                )
+            );
         }
 
         private RenderJQueryDocReadyDelegator GetClientSideScript(string ddlUserId, string divUserId)
@@ -155,18 +139,18 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     "var onload = $('#" + ddlUserId + "').find('option').filter(':selected').val();" +
                     "if(onload == 'custom')" +
                     "{" +
-                    "$('#" + divUserId + "').show();" +
+                        "$('#" + divUserId + "').show();" +
                     "}" +
                     "$('#" + ddlUserId + "').change(function () {" +
-                    "var selectedConfig = $(this).find('option').filter(':selected').val();" +
-                    "if(selectedConfig == 'custom')" +
-                    "{" +
-                    "$('#" + divUserId + "').show();" +
-                    "}" +
-                    "else" +
-                    "{" +
-                    "$('#" + divUserId + "').hide();" +
-                    "}" +
+                        "var selectedConfig = $(this).find('option').filter(':selected').val();" +
+                        "if(selectedConfig == 'custom')" +
+                        "{" +
+                            "$('#" + divUserId + "').show();" +
+                        "}" +
+                        "else" +
+                        "{" +
+                            "$('#" + divUserId + "').hide();" +
+                        "}" +
                     "}).change();"
                     )
                 );
