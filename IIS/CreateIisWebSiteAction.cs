@@ -65,7 +65,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 new LongActionDescription(
                     "at ",
                     new Hilite(this.PhysicalPath),
-                    "using the ",
+                    " using the ",
                     new Hilite(this.ApplicationPool),
                     " application pool on port ",
                     new Hilite(this.Port)
