@@ -40,27 +40,28 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
 
         public static Dictionary<string, string> ExtractVariables(string script, IOperationExecutionContext context)
         {
-            var vars = ExtractVariablesInternal(script);
-            var results = new Dictionary<string, string>();
-            foreach (var var in vars)
-            {
-                if (IsLegalVariableName(var))
-                {
-                    var varValue = context.TryGetVariableValue("${" + var + "}");
-                    if (varValue != null)
-                    {
-                        results[var] = varValue.Value.AsString();
-                    }
-                    else
-                    {
-                        varValue = context.TryGetFunctionValue("${" + var + "}");
-                        if (varValue != null)
-                            results[var] = varValue.Value.AsString();
-                    }
-                }
-            }
+            throw new NotImplementedException();
+            //var vars = ExtractVariablesInternal(script);
+            //var results = new Dictionary<string, string>();
+            //foreach (var var in vars)
+            //{
+            //    if (IsLegalVariableName(var))
+            //    {
+            //        var varValue = context.TryGetVariableValue("${" + var + "}");
+            //        if (varValue != null)
+            //        {
+            //            results[var] = varValue.Value.AsString();
+            //        }
+            //        else
+            //        {
+            //            varValue = context.TryGetFunctionValue("${" + var + "}");
+            //            if (varValue != null)
+            //                results[var] = varValue.Value.AsString();
+            //        }
+            //    }
+            //}
 
-            return results;
+            //return results;
         }
 
         public Task<int?> RunAsync(string script, CancellationToken cancellationToken)

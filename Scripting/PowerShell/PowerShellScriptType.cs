@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -11,10 +12,8 @@ using Inedo.BuildMaster.Extensibility.Scripting;
 
 namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 {
-    [ScriptTypeProperties(
-        "Windows PowerShell",
-        "Provides script library support for Windows PowerShell scripts.",
-        "powershell")]
+    [DisplayName("Windows PowerShell")]
+    [Description("Provides script library support for Windows PowerShell scripts.")]
     [Tag("windows")]
     public sealed class PowerShellScriptType : ScriptTypeBase, IScriptMetadataReader
     {

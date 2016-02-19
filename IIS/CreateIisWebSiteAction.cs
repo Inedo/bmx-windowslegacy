@@ -91,7 +91,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 this.LogDebug($"IIS did not contain a web site named {this.Name}, creating...");
             }
 
-            int port = string.IsNullOrEmpty(this.Port) ? 80 : InedoLib.Util.Int.ParseZ(this.Port);
+            int port = string.IsNullOrEmpty(this.Port) ? 80 : (AH.ParseInt(this.Port) ?? 0);
             if (port < 1 || port > ushort.MaxValue)
             {
                 this.LogError($"The specified port ({this.Port}) does not resolve to a valid port number.");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
@@ -10,18 +11,18 @@ using Inedo.BuildMaster.Extensibility.Variables;
 using Inedo.BuildMaster.Web;
 using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 using Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
-    [ActionProperties(
-        "Execute PowerShell Script",
-        "Runs a PowerShell script on the target server.")]
+    [DisplayName("Execute PowerShell Script")]
+    [Description("Runs a PowerShell script on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecutePowerShellScriptActionEditor))]
     [ConvertibleToOperation(typeof(PSExecuteImporter))]
     public sealed class ExecutePowerShellScriptAction : ExecuteScriptActionBase<PowerShellScriptType>, IMissingPersistentPropertyHandler
     {
-        void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IDictionary<string, string> missingProperties)
+        void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IReadOnlyDictionary<string, string> missingProperties)
         {
             // Convert old format from before BM 4.1
 
@@ -65,7 +66,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
                 foreach (var parameter in parameterData)
                 {
-                    if (string.IsNullOrEmpty(this.ParameterValues.GetValueOrDefault(parameter.Parameter_Name)))
+                    string rubbish;
+                    this.ParameterValues.TryGetValue(parameter.Parameter_Name, out rubbish);
+                    if (string.IsNullOrEmpty(rubbish))
                     {
                         try
                         {
@@ -85,7 +88,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
 
         private static IDictionary<string, string> BuildDictionary(string values)
         {
-            return Util.Persistence.DeserializeToStringArray(values)
+            return Persistence.DeserializeToStringArray(values)
                 .Select(s => s.Split(new[] { '=' }, 2))
                 .Where(p => p.Length == 2)
                 .Distinct(p => p[0], StringComparer.OrdinalIgnoreCase)
