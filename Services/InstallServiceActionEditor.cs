@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.UI.WebControls;
+﻿using System.Web.UI.WebControls;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls;
@@ -91,9 +90,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                 new SlimFormField("Service description:", this.txtDescription),
                 new SlimFormField("User account:", this.txtUserAccount)
                 {
-                    HelpText = HelpText.FromHtml("Supply a user account which the service will run as. <i>NT AUTHORITY\\LocalSystem</i> is used if an account is not supplied. " +
+                    HelpText = "Supply a user account which the service will run as. <i>NT AUTHORITY\\LocalSystem</i> is used if an account is not supplied. " +
                         "To use Network Service, enter <i>NT AUTHORITY\\NetworkService</i>.<br/><br/>" +
-                        "If a built in service account is used, leave the password field blank.")
+                        "If a built in service account is used, leave the password field blank."
                 },
                 new SlimFormField("User account password:", this.txtPassword),
                 new SlimFormField(

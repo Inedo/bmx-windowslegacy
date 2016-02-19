@@ -5,9 +5,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 {
     internal sealed class ExecutePowerShellScriptActionEditor : ExecuteScriptActionEditor<PowerShellScriptType, ExecutePowerShellScriptAction>
     {
-        protected override bool ShowVariables
-        {
-            get { return true; }
-        }
+        protected override bool ShowVariables => true;
     }
 }

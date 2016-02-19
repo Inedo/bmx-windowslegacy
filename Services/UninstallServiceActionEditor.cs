@@ -1,6 +1,5 @@
 ﻿using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
@@ -9,14 +8,14 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 {
     internal sealed class UninstallServiceActionEditor : ActionEditorBase
     {
-        private ServiceSelector ddlServices;
+        private ValidatingTextBox txtService;
         private CheckBox chkErrorIfNotInstalled;
         private CheckBox chkStopIfRunning;
 
         public override void BindToForm(ActionBase extension)
         {
             var action = (UninstallServiceAction)extension;
-            this.ddlServices.Value = action.ServiceName;
+            this.txtService.Text = action.ServiceName;
             this.chkErrorIfNotInstalled.Checked = action.ErrorIfNotInstalled;
             this.chkStopIfRunning.Checked = action.StopIfRunning;
         }
@@ -24,7 +23,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         {
             return new UninstallServiceAction
             {
-                ServiceName = this.ddlServices.Value,
+                ServiceName = this.txtService.Text,
                 ErrorIfNotInstalled = this.chkErrorIfNotInstalled.Checked,
                 StopIfRunning = this.chkStopIfRunning.Checked
             };
@@ -32,14 +31,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         protected override void CreateChildControls()
         {
-            this.ddlServices = new ServiceSelector { ID = "ddlServices" };
-
-            var ctlValidator = new StyledCustomValidator();
-            ctlValidator.ServerValidate +=
-                (s, e) =>
-                {
-                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlServices.Value);
-                };
+            this.txtService = new ValidatingTextBox { Required = true };
 
             this.chkErrorIfNotInstalled = new CheckBox
             {
@@ -52,7 +44,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             };
 
             this.Controls.Add(
-                new SlimFormField("Service:", this.ddlServices, ctlValidator),
+                new SlimFormField("Service:", this.txtService),
                 new SlimFormField(
                     "Options:",
                     new Div(this.chkErrorIfNotInstalled),

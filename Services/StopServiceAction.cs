@@ -1,70 +1,35 @@
 using System;
+using System.ComponentModel;
 using System.ServiceProcess;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.ActionImporters;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    /// <summary>
-    /// An action that stops a Windows service.
-    /// </summary>
-    [ActionProperties(
-        "Stop Service",
-        "Stops a Windows service.")]
+    [DisplayName("Stop Service")]
+    [Description("Stops a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StopServiceActionEditor))]
+    [ConvertibleToOperation(typeof(StopServiceImporter))]
     public sealed class StopServiceAction : RemoteActionBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StopServiceAction"/> class.
-        /// </summary>
-        public StopServiceAction()
-        {
-            this.WaitForStop = true;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            return string.Format(
-                "Stop '{0}' service{1}.",
-                this.ServiceName,
-                this.WaitForStop ? " and wait until its status is \"Stopped\"" : string.Empty
-            );
-        }
-
-        /// <summary>
-        /// Gets or sets the service to stop.
-        /// </summary>
         [Persistent]
         public string ServiceName { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether the action should continue after stopping the service
-        /// or wait until its status reports stopped.
-        /// </summary>
         [Persistent]
-        public bool WaitForStop { get; set; }
-
-        /// <summary>
-        /// Gets or sets whether the action should ignore the error generated if the service is already
-        /// stopped before the action has executed.
-        /// </summary>
+        public bool WaitForStop { get; set; } = true;
         [Persistent]
         public bool IgnoreAlreadyStoppedError { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            var longDesc = new LongActionDescription();
+            var longDesc = new RichDescription();
 
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Stop ",
                     this.ServiceName,
                     " Service"

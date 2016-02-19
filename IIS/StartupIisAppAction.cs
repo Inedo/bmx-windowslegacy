@@ -1,32 +1,28 @@
+using System.ComponentModel;
 using System.Threading;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
-    /// <summary>
-    /// Represents an action that starts an IIS Application Pool.
-    /// </summary>
-    [ActionProperties(
-        "Start IIS App Pool",
-        "Starts an application pool in IIS.")]
+    [DisplayName("Start IIS App Pool")]
+    [Description("Starts an application pool in IIS.")]
     [Tag("windows")]
     [Tag("iis")]
     [CustomEditor(typeof(StartStopIISAppActionEditor<StartupIisAppAction>))]
     public sealed class StartupIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
-        /// <summary>
-        /// Gets or sets the name of the application pool to start.
-        /// </summary>
         [Persistent]
         public string AppPool { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Start ",
                     new Hilite(this.AppPool),
                     " application pool"

@@ -1,37 +1,29 @@
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    /// <summary>
-    /// Custom editor for the <see cref="StopServiceAction"/> class.
-    /// </summary>
     internal sealed class StopServiceActionEditor : ActionEditorBase
     {
-        private ServiceSelector ddlServices;
+        private ValidatingTextBox txtService;
         private CheckBox chkWaitForStop;
         private CheckBox chkIgnoreAlreadyStoppedError;
 
         public override void BindToForm(ActionBase extension)
         {
-            this.EnsureChildControls();
-
             var ssa = (StopServiceAction)extension;
-            this.ddlServices.Value = ssa.ServiceName;
+            this.txtService.Text = ssa.ServiceName;
             this.chkWaitForStop.Checked = ssa.WaitForStop;
             this.chkIgnoreAlreadyStoppedError.Checked = ssa.IgnoreAlreadyStoppedError;
         }
         public override ActionBase CreateFromForm()
         {
-            this.EnsureChildControls();
-
             return new StopServiceAction
             {
-                ServiceName = this.ddlServices.Value,
+                ServiceName = this.txtService.Text,
                 WaitForStop = this.chkWaitForStop.Checked,
                 IgnoreAlreadyStoppedError = this.chkIgnoreAlreadyStoppedError.Checked
             };
@@ -39,14 +31,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         protected override void CreateChildControls()
         {
-            this.ddlServices = new ServiceSelector { ID = "ddlServices" };
-
-            var ctlServiceValidator = new StyledCustomValidator();
-            ctlServiceValidator.ServerValidate +=
-                (s, e) =>
-                {
-                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlServices.Value);
-                };
+            this.txtService = new ValidatingTextBox { Required = true };
 
             this.chkWaitForStop = new CheckBox
             {
@@ -61,7 +46,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             };
 
             this.Controls.Add(
-                new SlimFormField("Service:", this.ddlServices, ctlServiceValidator),
+                new SlimFormField("Service:", this.txtService),
                 new SlimFormField(
                     "Options:",
                     new Div(this.chkWaitForStop),

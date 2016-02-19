@@ -1,15 +1,17 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 using Inedo.WindowsServices;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    [ActionProperties(
-        "Install Service",
-        "Installs a Windows service.")]
+    [DisplayName("Install Service")]
+    [Description("Installs a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(InstallServiceActionEditor))]
     public sealed class InstallServiceAction : RemoteActionBase
@@ -33,15 +35,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         [Persistent]
         public bool ErrorIfAlreadyInstalled { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Install ",
                     new Hilite(this.ServiceName),
                     " Service"
                 ),
-                new LongActionDescription(
+                new RichDescription(
                     "from ",
                     new Hilite(this.ExePath + " " + this.Arguments)
                 )

@@ -1,44 +1,29 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
-    /// <summary>
-    /// Runs a script using cscript.exe on the target server.
-    /// </summary>
-    [ActionProperties(
-        "Execute CScript",
-        "Runs a script using cscript.exe on the target server.")]
+    [DisplayName("Execute CScript")]
+    [Description("Runs a script using cscript.exe on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecuteCScriptActionEditor))]
     public sealed class ExecuteCScriptAction : AgentBasedActionBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExecuteCScriptAction"/> class.
-        /// </summary>
-        public ExecuteCScriptAction()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the path to the script to execute.
-        /// </summary>
         [Persistent]
         public string ScriptPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the arguments to pass to cscript except the script path.
-        /// </summary>
         [Persistent]
         public string Arguments { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            var longDesc = new LongActionDescription();
+            var longDesc = new RichDescription();
             if (!string.IsNullOrWhiteSpace(this.Arguments))
             {
                 longDesc.AppendContent(
@@ -47,8 +32,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                 );
             }
 
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Run ",
                     new DirectoryHilite(this.OverriddenSourceDirectory, this.ScriptPath),
                     " using cscript.exe"
@@ -57,12 +42,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             );
         }
 
-        /// <summary>
-        /// Executes the action.
-        /// </summary>
-        /// <remarks>
-        /// This method is always called on the BuildMaster server.
-        /// </remarks>
         protected override void Execute()
         {
             this.LogDebug("Arguments: " + this.Arguments);

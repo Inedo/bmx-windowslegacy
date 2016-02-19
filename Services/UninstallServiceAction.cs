@@ -1,15 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ServiceProcess;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 using Inedo.WindowsServices;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    [ActionProperties(
-        "Uninstall Service",
-        "Uninstalls a Windows service.")]
+    [DisplayName("Uninstall Service")]
+    [Description("Uninstalls a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(UninstallServiceActionEditor))]
     public sealed class UninstallServiceAction : RemoteActionBase
@@ -21,10 +23,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         [Persistent]
         public bool StopIfRunning { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Uninstall ",
                     new Hilite(this.ServiceName),
                     " Service"
@@ -70,7 +72,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                                 }
                             }
                         }
-                        catch(Exception ex2)
+                        catch (Exception ex2)
                         {
                             this.LogWarning("Could not determine if service is running: " + ex2.Message);
                         }

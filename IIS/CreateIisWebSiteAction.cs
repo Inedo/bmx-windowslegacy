@@ -1,12 +1,14 @@
-﻿using Inedo.BuildMaster;
+﻿using System.ComponentModel;
+using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
-    [ActionProperties(
-       "Create IIS 7+ Web Site",
-       "Creates a new web site in IIS 7 or later.")]
+    [DisplayName("Create IIS Web Site")]
+    [Description("Creates a new web site in IIS 7 or later.")]
     [Tag(Tags.Windows)]
     [Tag("iis")]
     [CustomEditor(typeof(CreateIisWebSiteActionEditor))]
@@ -54,15 +56,15 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         [Persistent]
         public bool OmitActionIfWebSiteExists { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Create ",
                     new Hilite(this.Name),
                     " IIS Web Site"
                 ),
-                new LongActionDescription(
+                new RichDescription(
                     "at ",
                     new Hilite(this.PhysicalPath),
                     " using the ",

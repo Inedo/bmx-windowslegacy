@@ -1,5 +1,4 @@
 ﻿using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
 using Inedo.Web.Controls;
 
@@ -8,38 +7,27 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     internal sealed class StartStopIISAppActionEditor<TAction> : ActionEditorBase
         where TAction : ActionBase, IIISAppPoolAction, new()
     {
-        private AppPoolSelector ddlAppPool;
+        private ValidatingTextBox txtAppPool;
 
         public override void BindToForm(ActionBase extension)
         {
-            this.EnsureChildControls();
-
             var action = (TAction)extension;
-            this.ddlAppPool.Value = action.AppPool;
+            this.txtAppPool.Text = action.AppPool;
         }
         public override ActionBase CreateFromForm()
         {
-            this.EnsureChildControls();
-
             return new TAction
             {
-                AppPool = this.ddlAppPool.Value
+                AppPool = this.txtAppPool.Text
             };
         }
 
         protected override void CreateChildControls()
         {
-            this.ddlAppPool = new AppPoolSelector { ID = "ddlAppPool" };
-
-            var ctlValidator = new StyledCustomValidator();
-            ctlValidator.ServerValidate +=
-                (s, e) =>
-                {
-                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlAppPool.Value);
-                };
+            this.txtAppPool = new ValidatingTextBox { Required = true };
 
             this.Controls.Add(
-                new SlimFormField("Application pool:", this.ddlAppPool, ctlValidator)
+                new SlimFormField("Application pool:", this.txtAppPool)
             );
         }
     }

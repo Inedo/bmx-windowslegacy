@@ -1,21 +1,15 @@
 using System;
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
-using Inedo.Web.ClientResources;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
-using Inedo.Web.Handlers;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    /// <summary>
-    /// Custom editor for the <see cref="StartServiceAction"/> class.
-    /// </summary>
     internal sealed class StartServiceActionEditor : ActionEditorBase
     {
-        private ServiceSelector ddlServices;
+        private ValidatingTextBox txtService;
         private TextBox txtArgs;
         private CheckBox chkWaitForStart;
         private CheckBox chkIgnoreAlreadyStartedError;
@@ -23,10 +17,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         public override void BindToForm(ActionBase extension)
         {
-            this.EnsureChildControls();
-
             var ssa = (StartServiceAction)extension;
-            this.ddlServices.Value = ssa.ServiceName;
+            this.txtService.Text = ssa.ServiceName;
             this.txtArgs.Text = (ssa.StartupArgs == null)
                 ? string.Empty
                 : string.Join(Environment.NewLine, ssa.StartupArgs);
@@ -36,11 +28,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
         }
         public override ActionBase CreateFromForm()
         {
-            this.EnsureChildControls();
-
             return new StartServiceAction
             {
-                ServiceName = this.ddlServices.Value,
+                ServiceName = this.txtService.Text,
                 StartupArgs = this.txtArgs.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries),
                 WaitForStart = this.chkWaitForStart.Checked,
                 IgnoreAlreadyStartedError = this.chkIgnoreAlreadyStartedError.Checked,
@@ -50,14 +40,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         protected override void CreateChildControls()
         {
-            this.ddlServices = new ServiceSelector { ID = "ddlServices" };
-
-            var ctlServiceValidator = new StyledCustomValidator();
-            ctlServiceValidator.ServerValidate +=
-                (s, e) =>
-                {
-                    e.IsValid = !string.IsNullOrWhiteSpace(this.ddlServices.Value);
-                };
+            this.txtService = new ValidatingTextBox { Required = true };
 
             this.txtArgs = new TextBox
             {
@@ -84,7 +67,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             };
 
             this.Controls.Add(
-                new SlimFormField("Service:", this.ddlServices, ctlServiceValidator),
+                new SlimFormField("Service:", this.txtService),
                 new SlimFormField("Startup arguments:", this.txtArgs)
                 {
                     HelpText = "Enter arguments one per line."

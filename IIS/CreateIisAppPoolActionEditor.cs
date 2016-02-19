@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web.Controls.Extensions;
@@ -8,9 +9,6 @@ using Inedo.Web.Controls.SimpleHtml;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
 {
-    /// <summary>
-    /// Custom editor for the <see cref="CreateIisAppPoolAction"/> class.
-    /// </summary>
     internal sealed class CreateIisAppPoolActionEditor : ActionEditorBase
     {
         private ValidatingTextBox txtName;
@@ -20,15 +18,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
         private Div divUser;
         private RadioButtonList rblIntegrated;
         private DropDownList ddlManagedRuntimeVersion;
-        private CheckBox chkSkipIfAppPoolExists;
 
         public override void BindToForm(ActionBase extension)
         {
             var action = (CreateIisAppPoolAction)extension;
 
             this.txtName.Text = action.Name;
-            if (new[] { "LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity" }.Contains(
-                action.User, StringComparer.OrdinalIgnoreCase))
+            if (new[] { "LocalSystem", "LocalService", "NetworkService", "ApplicationPoolIdentity" }.Contains(action.User, StringComparer.OrdinalIgnoreCase))
             {
                 this.ddlUser.SelectedValue = action.User;
             }
@@ -41,7 +37,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
 
             this.rblIntegrated.SelectedValue = action.IntegratedMode.ToString().ToLower();
             this.ddlManagedRuntimeVersion.SelectedValue = action.ManagedRuntimeVersion;
-            this.chkSkipIfAppPoolExists.Checked = action.OmitActionIfPoolExists;
         }
 
         public override ActionBase CreateFromForm()
@@ -52,14 +47,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 User = this.ddlUser.SelectedValue == "custom" ? this.txtUser.Text : this.ddlUser.SelectedValue,
                 Password = this.ddlUser.SelectedValue == "custom" ? this.txtPassword.Text : "",
                 IntegratedMode = bool.Parse(this.rblIntegrated.SelectedValue),
-                ManagedRuntimeVersion = this.ddlManagedRuntimeVersion.SelectedValue,
-                OmitActionIfPoolExists = this.chkSkipIfAppPoolExists.Checked
+                ManagedRuntimeVersion = this.ddlManagedRuntimeVersion.SelectedValue
             };
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            this.Controls.Add(this.GetClientSideScript(this.ddlUser.ClientID, this.divUser.ClientID));
+            this.Controls.Add(GetClientSideScript(this.ddlUser.ClientID, this.divUser.ClientID));
 
             base.OnPreRender(e);
         }
@@ -82,17 +76,22 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
             this.txtUser = new ValidatingTextBox();
             this.txtPassword = new PasswordTextBox();
 
-            this.divUser = new Div(
-                new SlimFormField("User name:", this.txtUser), 
-                new SlimFormField("Password:", this.txtPassword)
-            );
+            this.divUser = new Div
+            { 
+                Controls = 
+                { 
+                    new LiteralControl("<br />"),
+                    new SlimFormField("User name:", this.txtUser), 
+                    new SlimFormField("Password:", this.txtPassword)
+                } 
+            };
 
             this.rblIntegrated = new RadioButtonList
             {
-                Items =
-                {
+                Items = 
+                { 
                     new ListItem("Integrated Mode", "true"),
-                    new ListItem("Classic Mode", "false")
+                    new ListItem("Classic Mode", "false") 
                 }
             };
 
@@ -105,8 +104,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 }
             };
 
-            this.chkSkipIfAppPoolExists = new CheckBox() { Text = "Skip if application pool already exists", Checked = true };
-
             this.Controls.Add(
                 new SlimFormField(
                     "Application pool name:",
@@ -114,9 +111,9 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 ),
                 new SlimFormField(
                     "User identity:",
-                    this.ddlUser
+                    this.ddlUser,
+                    this.divUser
                 ),
-                this.divUser,
                 new SlimFormField(
                     "Managed pipeline mode:",
                     this.rblIntegrated
@@ -124,10 +121,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                 new SlimFormField(
                     "Managed runtime version:",
                     this.ddlManagedRuntimeVersion
-                ),
-                new SlimFormField(
-                    "Options:",
-                    this.chkSkipIfAppPoolExists
                 )
             );
         }
@@ -141,6 +134,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                     "{" +
                         "$('#" + divUserId + "').show();" +
                     "}" +
+
                     "$('#" + ddlUserId + "').change(function () {" +
                         "var selectedConfig = $(this).find('option').filter(':selected').val();" +
                         "if(selectedConfig == 'custom')" +
@@ -152,8 +146,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
                             "$('#" + divUserId + "').hide();" +
                         "}" +
                     "}).change();"
-                    )
-                );
+                )
+            );
         }
     }
 }

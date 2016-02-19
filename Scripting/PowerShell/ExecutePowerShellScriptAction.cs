@@ -8,6 +8,7 @@ using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Actions.Scripting;
 using Inedo.BuildMaster.Extensibility.Variables;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 using Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
@@ -17,6 +18,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
         "Runs a PowerShell script on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecutePowerShellScriptActionEditor))]
+    [ConvertibleToOperation(typeof(PSExecuteImporter))]
     public sealed class ExecutePowerShellScriptAction : ExecuteScriptActionBase<PowerShellScriptType>, IMissingPersistentPropertyHandler
     {
         void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IDictionary<string, string> missingProperties)

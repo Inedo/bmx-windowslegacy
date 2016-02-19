@@ -24,7 +24,7 @@
     <SccProvider>
     </SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PublishUrl>http://localhost/Windows/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,44 +62,44 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BuildMaster.Web.Controls, Version=4.7.0.59, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.7\lib\net40\BuildMaster.Web.Controls.dll</HintPath>
+    <Reference Include="BuildMaster.Web.Controls, Version=5.0.0.3, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.5.0\lib\net45\BuildMaster.Web.Controls.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BuildMasterCore, Version=4.7.0.59, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.7\lib\net40\BuildMasterCore.dll</HintPath>
+    <Reference Include="BuildMasterCore, Version=5.0.0.3, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.5.0\lib\net45\BuildMasterCore.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="InedoLib, Version=193.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.4.7\lib\net40\InedoLib.dll</HintPath>
+    <Reference Include="InedoLib, Version=304.2.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.5.0\lib\net45\InedoLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\Microsoft.Web.Administration.dll</HintPath>
+    <Reference Include="Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Web.Administration.7.0.0.0\lib\net20\Microsoft.Web.Administration.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\v1.0\System.Management.Automation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IIS\AppPoolSelector.cs" />
+    <Compile Include="ActionImporters\PSExecuteImporter.cs" />
+    <Compile Include="ActionImporters\StartServiceImporter.cs" />
+    <Compile Include="ActionImporters\StopServiceImporter.cs" />
     <Compile Include="IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -112,12 +113,24 @@
     <Compile Include="IIS\IIS7Util.cs" />
     <Compile Include="IIS\IISException.cs" />
     <Compile Include="IIS\IISUtil.cs" />
-    <Compile Include="IIS\ProxiedUtil.cs" />
     <Compile Include="IIS\ShutdownIisAppAction.cs" />
     <Compile Include="IIS\StartStopIISAppActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="IIS\StartupIisAppAction.cs" />
+    <Compile Include="Operations\NotAnOperation.cs" />
+    <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
+    <Compile Include="Operations\Services\ControlServiceJob.cs" />
+    <Compile Include="Operations\Services\StartServiceOperation.cs" />
+    <Compile Include="Operations\Services\StopServiceOperation.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHost.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHostRawUserInterface.cs" />
+    <Compile Include="PowerShell\BuildMasterPSHostUserInterface.cs" />
+    <Compile Include="PowerShell\ExecutePowerShellJob.cs" />
+    <Compile Include="PowerShell\PowerShellExtensions.cs" />
+    <Compile Include="PowerShell\PowerShellOutputEventArgs.cs" />
+    <Compile Include="PowerShell\PowerShellScriptRunner.cs" />
+    <Compile Include="PowerShell\ShouldExitEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\PowerShell\BuildMasterPSHost.cs" />
     <Compile Include="Scripting\PowerShell\BuildMasterPSHostRawUserInterface.cs" />
@@ -133,7 +146,6 @@
     <Compile Include="Services\InstallServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Services\ServiceSelector.cs" />
     <Compile Include="Services\StopServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -141,7 +153,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Services\StopServiceAction.cs" />
-    <Compile Include="Services\ServicesHelper.cs" />
     <Compile Include="Services\StartServiceAction.cs" />
     <Compile Include="Services\UninstallServiceAction.cs" />
     <Compile Include="Services\UninstallServiceActionEditor.cs">
@@ -151,7 +162,6 @@
     <Compile Include="Shell\ExecuteCScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Shims.cs" />
     <Compile Include="WindowsExtensionConfigurer.cs" />
     <Compile Include="WindowsExtensionConfigurerEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -187,14 +197,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="IIS\AppPoolSelector.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Services\ServiceSelector.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

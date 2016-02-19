@@ -1,63 +1,40 @@
 using System;
+using System.ComponentModel;
 using System.ServiceProcess;
-using System.Threading;
 using Inedo.BuildMaster;
+using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.ActionImporters;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Services
 {
-    [ActionProperties(
-        "Start Service",
-        "Starts a Windows Service.")]
+    [DisplayName("Start Service")]
+    [Description("Starts a Windows Service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StartServiceActionEditor))]
+    [ConvertibleToOperation(typeof(StartServiceImporter))]
     public sealed class StartServiceAction : RemoteActionBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StartServiceAction"/> class.
-        /// </summary>
-        public StartServiceAction()
-        {
-            this.WaitForStart = true;
-        }
-
-        /// <summary>
-        /// Gets or sets the service to start.
-        /// </summary>
         [Persistent]
         public string ServiceName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the startup arguments for the service.
-        /// </summary>
         [Persistent]
-        public string[] StartupArgs  { get; set; }
+        public string[] StartupArgs { get; set; }
 
-        /// <summary>
-        /// Determines whether the action should or should immediately continue after starting the service
-        /// or wait until its status reports running.
-        /// </summary>
         [Persistent]
-        public bool WaitForStart  { get; set; }
+        public bool WaitForStart { get; set; } = true;
 
-        /// <summary>
-        /// Gets or sets whether the action should ignore the error generated if the service is already
-        /// started before the action has executed.
-        /// </summary>
         [Persistent]
         public bool IgnoreAlreadyStartedError { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the service being unable to start should
-        /// be considered a warning or an error.
-        /// </summary>
         [Persistent]
         public bool TreatUnableToStartAsWarning { get; set; }
 
-        public override ActionDescription GetActionDescription()
+        public override ExtendedRichDescription GetActionDescription()
         {
-            var longDesc = new LongActionDescription();
+            var longDesc = new RichDescription();
             if (this.StartupArgs != null && this.StartupArgs.Length > 0)
             {
                 longDesc.AppendContent(
@@ -66,8 +43,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                 );
             }
 
-            return new ActionDescription(
-                new ShortActionDescription(
+            return new ExtendedRichDescription(
+                new RichDescription(
                     "Start ",
                     this.ServiceName,
                     " Service"
@@ -125,7 +102,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
                             return null;
                         }
                     }
-                    
+
                     this.LogInformation("Service started.");
                 }
                 else
@@ -137,10 +114,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
             return null;
         }
 
-        /// <summary>
-        /// Invokes either log warning or log error depending on the mode.
-        /// </summary>
-        /// <param name="message">Message to log.</param>
         private void LogErrorWarning(string message)
         {
             if (this.TreatUnableToStartAsWarning)
