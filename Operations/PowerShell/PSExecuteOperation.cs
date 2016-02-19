@@ -53,12 +53,12 @@ psexec >>
         [Description("Indicates whether the script will execute in simulation mode. The default is false.")]
         public bool RunOnSimulation { get; set; }
 
-        public override Task ExecuteAsync(IOperationExecutionContext context)
+        public override async Task ExecuteAsync(IOperationExecutionContext context)
         {
             if (context.Simulation && !this.RunOnSimulation)
             {
                 this.LogInformation("Executing PowerShell script...");
-                return null;
+                return;
             }
 
             var jobRunner = context.Agent.GetService<IRemoteJobExecuter>();
@@ -75,11 +75,9 @@ psexec >>
 
             job.MessageLogged += (s, e) => this.Log(e.Level, e.Message);
 
-            return jobRunner.ExecuteJobAsync(job, context.CancellationToken);
-
-            //var result = (ExecutePowerShellJob.Result)await jobRunner.ExecuteJobAsync(job, context.CancellationToken);
-            //if (result.ExitCode != null)
-            //    this.LogDebug("Script exit code: " + result.ExitCode);
+            var result = (ExecutePowerShellJob.Result)await jobRunner.ExecuteJobAsync(job, context.CancellationToken);
+            if (result.ExitCode != null)
+                this.LogDebug("Script exit code: " + result.ExitCode);
         }
 
         protected override ExtendedRichDescription GetDescription(IOperationConfiguration config)
@@ -87,7 +85,7 @@ psexec >>
             return new ExtendedRichDescription(
                 new RichDescription(
                     "Execute ",
-                    new BuildMaster.Documentation.Hilite(config[nameof(this.ScriptText)])
+                    new Hilite(config[nameof(this.ScriptText)])
                 ),
                 new RichDescription(
                     "using Windows PowerShell"

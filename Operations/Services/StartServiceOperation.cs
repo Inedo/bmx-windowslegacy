@@ -46,7 +46,7 @@ Start-Service HDARS;")]
             return new ExtendedRichDescription(
                 new RichDescription(
                     "Start ",
-                    new BuildMaster.Documentation.Hilite(config[nameof(ServiceName)]),
+                    new Hilite(config[nameof(ServiceName)]),
                     " service"
                 )
             );

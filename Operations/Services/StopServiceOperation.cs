@@ -46,7 +46,7 @@ Stop-Service HDARS;")]
             return new ExtendedRichDescription(
                 new RichDescription(
                     "Stop ",
-                    new BuildMaster.Documentation.Hilite(config[nameof(ServiceName)]),
+                    new Hilite(config[nameof(ServiceName)]),
                     " service"
                 )
             );

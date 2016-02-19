@@ -23,7 +23,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                     if (service.Status == ServiceControllerStatus.Running)
                     {
                         this.LogInformation("Service is already running.");
-                        return (Task<object>)NotAnOperation.Complete;
+                        return Task.FromResult<object>(null);
                     }
 
                     service.Start();
@@ -35,7 +35,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                     if (service.Status == ServiceControllerStatus.Stopped)
                     {
                         this.LogInformation("Service is already stopped.");
-                        return (Task<object>)NotAnOperation.Complete;
+                        return Task.FromResult<object>(null);
                     }
 
                     service.Stop();
@@ -48,7 +48,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
                 }
             }
 
-            return (Task<object>)NotAnOperation.Complete;
+            return Task.FromResult<object>(null);
         }
 
         private void WaitForStartAsync(ServiceController service, CancellationToken cancellationToken)

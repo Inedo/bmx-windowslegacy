@@ -97,28 +97,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionImporters\PSExecuteImporter.cs" />
-    <Compile Include="ActionImporters\StartServiceImporter.cs" />
-    <Compile Include="ActionImporters\StopServiceImporter.cs" />
-    <Compile Include="IIS\CreateIisAppPoolAction.cs" />
-    <Compile Include="IIS\CreateIisAppPoolActionEditor.cs">
+    <Compile Include="Legacy\ActionImporters\PSExecuteImporter.cs" />
+    <Compile Include="Legacy\ActionImporters\StartServiceImporter.cs" />
+    <Compile Include="Legacy\ActionImporters\StopServiceImporter.cs" />
+    <Compile Include="Legacy\IIS\CreateIisAppPoolAction.cs" />
+    <Compile Include="Legacy\IIS\CreateIisAppPoolActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="IIS\CreateIisWebSiteAction.cs" />
-    <Compile Include="IIS\CreateIisWebSiteActionEditor.cs">
+    <Compile Include="Legacy\IIS\CreateIisWebSiteAction.cs" />
+    <Compile Include="Legacy\IIS\CreateIisWebSiteActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="IIS\IIISAppPoolAction.cs" />
-    <Compile Include="IIS\IIS6Util.cs" />
-    <Compile Include="IIS\IIS7Util.cs" />
-    <Compile Include="IIS\IISException.cs" />
-    <Compile Include="IIS\IISUtil.cs" />
-    <Compile Include="IIS\ShutdownIisAppAction.cs" />
-    <Compile Include="IIS\StartStopIISAppActionEditor.cs">
+    <Compile Include="Legacy\IIS\IIISAppPoolAction.cs" />
+    <Compile Include="Legacy\IIS\IIS6Util.cs" />
+    <Compile Include="Legacy\IIS\IIS7Util.cs" />
+    <Compile Include="Legacy\IIS\IISException.cs" />
+    <Compile Include="Legacy\IIS\IISUtil.cs" />
+    <Compile Include="Legacy\IIS\ShutdownIisAppAction.cs" />
+    <Compile Include="Legacy\IIS\StartStopIISAppActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="IIS\StartupIisAppAction.cs" />
-    <Compile Include="Operations\NotAnOperation.cs" />
+    <Compile Include="Legacy\IIS\StartupIisAppAction.cs" />
     <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
     <Compile Include="Operations\Services\ControlServiceJob.cs" />
     <Compile Include="Operations\Services\StartServiceOperation.cs" />
@@ -132,38 +131,38 @@
     <Compile Include="PowerShell\PowerShellScriptRunner.cs" />
     <Compile Include="PowerShell\ShouldExitEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripting\PowerShell\BuildMasterPSHost.cs" />
-    <Compile Include="Scripting\PowerShell\BuildMasterPSHostRawUserInterface.cs" />
-    <Compile Include="Scripting\PowerShell\BuildMasterPSHostUserInterface.cs" />
-    <Compile Include="Scripting\PowerShell\ExecutePowerShellScriptAction.cs" />
-    <Compile Include="Scripting\PowerShell\ExecutePowerShellScriptActionEditor.cs">
+    <Compile Include="Legacy\Scripting\PowerShell\BuildMasterPSHost.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\BuildMasterPSHostRawUserInterface.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\BuildMasterPSHostUserInterface.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\ExecutePowerShellScriptAction.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\ExecutePowerShellScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Scripting\PowerShell\PowerShellScriptRunner.cs" />
-    <Compile Include="Scripting\PowerShell\PowerShellScriptType.cs" />
-    <Compile Include="Scripting\PowerShell\ShouldExitEventArgs.cs" />
-    <Compile Include="Services\InstallServiceAction.cs" />
-    <Compile Include="Services\InstallServiceActionEditor.cs">
+    <Compile Include="Legacy\Scripting\PowerShell\PowerShellScriptRunner.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\PowerShellScriptType.cs" />
+    <Compile Include="Legacy\Scripting\PowerShell\ShouldExitEventArgs.cs" />
+    <Compile Include="Legacy\Services\InstallServiceAction.cs" />
+    <Compile Include="Legacy\Services\InstallServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Services\StopServiceActionEditor.cs">
+    <Compile Include="Legacy\Services\StopServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Services\StartServiceActionEditor.cs">
+    <Compile Include="Legacy\Services\StartServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Services\StopServiceAction.cs" />
-    <Compile Include="Services\StartServiceAction.cs" />
-    <Compile Include="Services\UninstallServiceAction.cs" />
-    <Compile Include="Services\UninstallServiceActionEditor.cs">
+    <Compile Include="Legacy\Services\StopServiceAction.cs" />
+    <Compile Include="Legacy\Services\StartServiceAction.cs" />
+    <Compile Include="Legacy\Services\UninstallServiceAction.cs" />
+    <Compile Include="Legacy\Services\UninstallServiceActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Shell\ExecuteCScriptAction.cs" />
-    <Compile Include="Shell\ExecuteCScriptActionEditor.cs">
+    <Compile Include="Legacy\Shell\ExecuteCScriptAction.cs" />
+    <Compile Include="Legacy\Shell\ExecuteCScriptActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WindowsExtensionConfigurer.cs" />
-    <Compile Include="WindowsExtensionConfigurerEditor.cs">
+    <Compile Include="Legacy\WindowsExtensionConfigurer.cs" />
+    <Compile Include="Legacy\WindowsExtensionConfigurerEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
   </ItemGroup>
