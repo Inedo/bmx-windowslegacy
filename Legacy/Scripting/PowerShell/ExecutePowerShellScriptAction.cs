@@ -52,13 +52,11 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
             var configurer = (WindowsExtensionConfigurer)this.GetExtensionConfigurer();
             if (configurer.OverridePowerShellDefaults)
             {
-                var parameterData = StoredProcs.Scripts_GetScript(this.ScriptId)
-                    .Execute()
+                var parameterData = DB.Scripts_GetScript(this.ScriptId)
                     .ScriptParameters
                     .Where(p => !string.IsNullOrEmpty(p.DefaultValue_Text));
 
-                var application = StoredProcs.Applications_GetApplication(this.Context.ApplicationId)
-                    .Execute()
+                var application = DB.Applications_GetApplication(this.Context.ApplicationId)
                     .Applications_Extended
                     .FirstOrDefault();
 
