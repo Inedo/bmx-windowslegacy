@@ -105,7 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Legacy\ActionImporters\PSExecuteImporter.cs" />
+    <Compile Include="Legacy\ActionImporters\StartAppPoolImporter.cs" />
     <Compile Include="Legacy\ActionImporters\StartServiceImporter.cs" />
+    <Compile Include="Legacy\ActionImporters\StopAppPoolImporter.cs" />
     <Compile Include="Legacy\ActionImporters\StopServiceImporter.cs" />
     <Compile Include="Legacy\IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="Legacy\IIS\CreateIisAppPoolActionEditor.cs">
@@ -125,6 +127,8 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Legacy\IIS\StartupIisAppAction.cs" />
+    <Compile Include="Operations\IIS\StartAppPoolOperation.cs" />
+    <Compile Include="Operations\IIS\StopAppPoolOperation.cs" />
     <Compile Include="Operations\PowerShell\PSCallOperation.cs" />
     <Compile Include="Operations\PowerShell\PSCallOperationEditor.cs" />
     <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />

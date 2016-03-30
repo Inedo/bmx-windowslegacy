@@ -5,6 +5,7 @@ using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Web;
+using Inedo.BuildMasterExtensions.Windows.Legacy.ActionImporters;
 using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Iis
@@ -14,6 +15,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     [Tag("windows")]
     [Tag("iis")]
     [CustomEditor(typeof(StartStopIISAppActionEditor<ShutdownIisAppAction>))]
+    [ConvertibleToOperation(typeof(StopAppPoolImporter))]
     public sealed class ShutdownIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
         [Persistent]

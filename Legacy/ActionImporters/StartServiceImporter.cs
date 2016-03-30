@@ -10,7 +10,7 @@ namespace Inedo.BuildMasterExtensions.Windows.ActionImporters
         {
             return new StartServiceOperation
             {
-                ServiceName = action.ServiceName,
+                ServiceName = context.ConvertLegacyExpression(action.ServiceName),
                 WaitForRunningStatus = action.WaitForStart
             };
         }

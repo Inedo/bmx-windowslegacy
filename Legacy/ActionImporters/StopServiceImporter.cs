@@ -10,7 +10,7 @@ namespace Inedo.BuildMasterExtensions.Windows.ActionImporters
         {
             return new StopServiceOperation
             {
-                ServiceName = action.ServiceName,
+                ServiceName = context.ConvertLegacyExpression(action.ServiceName),
                 WaitForStoppedStatus = action.WaitForStop
             };
         }
