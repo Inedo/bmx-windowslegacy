@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.Diagnostics;
+using Inedo.ExecutionEngine;
 
 namespace Inedo.BuildMasterExtensions.Windows.PowerShell
 {
@@ -40,28 +41,20 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
 
         public static Dictionary<string, string> ExtractVariables(string script, IOperationExecutionContext context)
         {
-            throw new NotImplementedException();
-            //var vars = ExtractVariablesInternal(script);
-            //var results = new Dictionary<string, string>();
-            //foreach (var var in vars)
-            //{
-            //    if (IsLegalVariableName(var))
-            //    {
-            //        var varValue = context.TryGetVariableValue("${" + var + "}");
-            //        if (varValue != null)
-            //        {
-            //            results[var] = varValue.Value.AsString();
-            //        }
-            //        else
-            //        {
-            //            varValue = context.TryGetFunctionValue("${" + var + "}");
-            //            if (varValue != null)
-            //                results[var] = varValue.Value.AsString();
-            //        }
-            //    }
-            //}
+            var vars = ExtractVariablesInternal(script);
+            var results = new Dictionary<string, string>();
+            foreach (var var in vars)
+            {
+                if (RuntimeVariableName.IsLegalVariableName(var))
+                {
+                    var varName = new RuntimeVariableName(var, RuntimeValueType.Scalar);
+                    var varValue = context.TryGetVariableValue(varName.ToString());
+                    if (varValue != null)
+                        results[var] = varValue.Value.AsString();
+                }
+            }
 
-            //return results;
+            return results;
         }
 
         public Task<int?> RunAsync(string script, CancellationToken cancellationToken)
@@ -69,6 +62,10 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             return this.RunAsync(script, new Dictionary<string, string>(), new Dictionary<string, string>(), cancellationToken);
         }
         public Task<int?> RunAsync(string script, Dictionary<string, string> variables, Dictionary<string, string> outVariables, CancellationToken cancellationToken)
+        {
+            return this.RunAsync(script, new Dictionary<string, string>(), new Dictionary<string, string>(), new Dictionary<string, string>(), cancellationToken);
+        }
+        public async Task<int?> RunAsync(string script, Dictionary<string, string> variables, Dictionary<string, string> parameters, Dictionary<string, string> outVariables, CancellationToken cancellationToken)
         {
             var runspace = this.Runspace;
 
@@ -98,6 +95,12 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             powerShell.Streams.AttachLogging(this);
             powerShell.AddScript(script);
 
+            foreach (var p in parameters)
+            {
+                this.LogDebug($"Assigning parameter {p.Key}={p.Value}");
+                powerShell.AddParameter(p.Key, p.Value);
+            }
+
             int? exitCode = null;
             EventHandler<ShouldExitEventArgs> handleShouldExit = (s, e) => exitCode = e.ExitCode;
             this.pshost.ShouldExit += handleShouldExit;
@@ -105,9 +108,7 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             {
                 try
                 {
-                    powerShell.Invoke((PSDataCollection<PSObject>)null, output);
-
-                    //await Task.Factory.FromAsync(powerShell.BeginInvoke((PSDataCollection<PSObject>)null, output), powerShell.EndInvoke);
+                    await Task.Factory.FromAsync(powerShell.BeginInvoke((PSDataCollection<PSObject>)null, output), powerShell.EndInvoke);
 
                     foreach (var var in outVariables.Keys.ToList())
                         outVariables[var] = powerShell.Runspace.SessionStateProxy.GetVariable(var)?.ToString();
@@ -118,9 +119,7 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
                 }
             }
 
-            var rubbish2 = new Task<int?>(() => exitCode);
-            rubbish2.RunSynchronously();
-            return rubbish2;
+            return exitCode;
         }
 
         public void Dispose()
@@ -181,49 +180,6 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             var handler = this.OutputReceived;
             if (handler != null)
                 handler(this, new PowerShellOutputEventArgs(obj));
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether the specified string is a legal variable name.
-        /// </summary>
-        /// <param name="s">The string to test.</param>
-        /// <returns>True if <paramref name="s"/> is a legal variable name; otherwise false.</returns>
-        public static bool IsLegalVariableName(string s)
-        {
-            if (string.IsNullOrWhiteSpace(s))
-                return false;
-
-            if (s.Length > 50)
-                return false;
-
-            if (char.IsWhiteSpace(s[0]) || char.IsWhiteSpace(s[s.Length - 1]))
-                return false;
-
-            foreach (var c in s)
-            {
-                if (!IsLegalExpandedVariableCharacter(c))
-                    return false;
-            }
-
-            return true;
-        }
-        /// <summary>
-        /// Returns a value indicating whether the specified character is a legal basic variable character.
-        /// </summary>
-        /// <param name="c">The character to test.</param>
-        /// <returns>True if <paramref name="c"/> is a legal basic variable character; otherwise false.</returns>
-        public static bool IsLegalBasicVariableCharacter(char c)
-        {
-            return char.IsLetterOrDigit(c) || c == '_';
-        }
-        /// <summary>
-        /// Returns a value indicating whether the specified character is a legal expanded variable character.
-        /// </summary>
-        /// <param name="c">The character to test.</param>
-        /// <returns>True if <paramref name="c"/> is a legal expanded variable character; otherwise false.</returns>
-        public static bool IsLegalExpandedVariableCharacter(char c)
-        {
-            return IsLegalBasicVariableCharacter(c) || c == '-' || c == '.' || c == ' ';
         }
     }
 }

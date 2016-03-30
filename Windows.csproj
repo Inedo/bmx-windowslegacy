@@ -78,6 +78,10 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Inedo.ExecutionEngine">
+      <HintPath>packages\Inedo.BuildMaster.SDK.5.0\lib\net45\Inedo.ExecutionEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="InedoLib, Version=329.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
       <HintPath>packages\Inedo.BuildMaster.SDK.5.0\lib\net45\InedoLib.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -121,6 +125,8 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Legacy\IIS\StartupIisAppAction.cs" />
+    <Compile Include="Operations\PowerShell\PSCallOperation.cs" />
+    <Compile Include="Operations\PowerShell\PSCallOperationEditor.cs" />
     <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
     <Compile Include="Operations\Services\ControlServiceJob.cs" />
     <Compile Include="Operations\Services\StartServiceOperation.cs" />
@@ -131,6 +137,9 @@
     <Compile Include="PowerShell\ExecutePowerShellJob.cs" />
     <Compile Include="PowerShell\PowerShellExtensions.cs" />
     <Compile Include="PowerShell\PowerShellOutputEventArgs.cs" />
+    <Compile Include="PowerShell\PowerShellParameterInfo.cs" />
+    <Compile Include="PowerShell\PowerShellScriptInfo.cs" />
+    <Compile Include="PowerShell\PowerShellScriptInfo.Parse.cs" />
     <Compile Include="PowerShell\PowerShellScriptRunner.cs" />
     <Compile Include="PowerShell\ShouldExitEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

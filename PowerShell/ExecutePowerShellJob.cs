@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.Diagnostics;
+using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.PowerShell
 {
@@ -17,6 +18,7 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
         public bool CollectOutput { get; set; }
         public bool LogOutput { get; set; }
         public Dictionary<string, string> Variables { get; set; }
+        public Dictionary<string, string> Parameters { get; set; }
         public string[] OutVariables { get; set; }
 
         public override void Serialize(Stream stream)
@@ -28,14 +30,21 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             writer.Write(this.CollectOutput);
             writer.Write(this.LogOutput);
 
-            writer.Write(this.Variables?.Count ?? 0);
+            SlimBinaryFormatter.WriteLength(stream, this.Variables?.Count ?? 0);
             foreach (var var in this.Variables ?? new Dictionary<string, string>())
             {
                 writer.Write(var.Key);
                 writer.Write(var.Value ?? string.Empty);
             }
 
-            writer.Write(this.OutVariables?.Length ?? 0);
+            SlimBinaryFormatter.WriteLength(stream, this.Parameters?.Count ?? 0);
+            foreach (var var in this.Parameters ?? new Dictionary<string, string>())
+            {
+                writer.Write(var.Key);
+                writer.Write(var.Value ?? string.Empty);
+            }
+
+            SlimBinaryFormatter.WriteLength(stream, this.OutVariables?.Length ?? 0);
             foreach (var var in this.OutVariables ?? new string[0])
                 writer.Write(var);
         }
@@ -48,7 +57,7 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             this.CollectOutput = reader.ReadBoolean();
             this.LogOutput = reader.ReadBoolean();
 
-            int count = reader.ReadInt32();
+            int count = SlimBinaryFormatter.ReadLength(stream);
             this.Variables = new Dictionary<string, string>(count);
             for (int i = 0; i < count; i++)
             {
@@ -57,13 +66,22 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
                 this.Variables[key] = value;
             }
 
-            count = reader.ReadInt32();
+            count = SlimBinaryFormatter.ReadLength(stream);
+            this.Parameters = new Dictionary<string, string>(count);
+            for (int i = 0; i < count; i++)
+            {
+                var key = reader.ReadString();
+                var value = reader.ReadString();
+                this.Parameters[key] = value;
+            }
+
+            count = SlimBinaryFormatter.ReadLength(stream);
             this.OutVariables = new string[count];
             for (int i = 0; i < count; i++)
                 this.OutVariables[i] = reader.ReadString();
         }
 
-        public override Task<object> ExecuteAsync(CancellationToken cancellationToken)
+        public override async Task<object> ExecuteAsync(CancellationToken cancellationToken)
         {
             using (var runner = new PowerShellScriptRunner { DebugLogging = this.DebugLogging, VerboseLogging = this.VerboseLogging })
             {
@@ -91,23 +109,14 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
 
                 var outVariables = this.OutVariables.ToDictionary(v => v, v => (string)null, StringComparer.OrdinalIgnoreCase);
 
-                return runner.RunAsync(this.ScriptText, this.Variables, outVariables, cancellationToken)
-                    .ContinueWith<object>(
-                        t => new Result
-                        {
-                            ExitCode = t.Result,
-                            Output = outputData,
-                            OutVariables = outVariables
-                        });
+                int? exitCode = await runner.RunAsync(this.ScriptText, this.Variables, this.Parameters, outVariables, cancellationToken);
 
-                //int? exitCode = await runner.RunAsync(this.ScriptText, this.Variables, outVariables, cancellationToken);
-
-                //return new Result
-                //{
-                //    ExitCode = exitCode,
-                //    Output = outputData,
-                //    OutVariables = outVariables
-                //};
+                return new Result
+                {
+                    ExitCode = exitCode,
+                    Output = outputData,
+                    OutVariables = outVariables
+                };
             }
         }
 
@@ -126,11 +135,11 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
                 writer.Write(data.ExitCode.Value);
             }
 
-            writer.Write(data.Output.Count);
+            SlimBinaryFormatter.WriteLength(stream, data.Output.Count);
             foreach (var s in data.Output)
                 writer.Write(s ?? string.Empty);
 
-            writer.Write(data.OutVariables.Count);
+            SlimBinaryFormatter.WriteLength(stream, data.OutVariables.Count);
             foreach (var v in data.OutVariables)
             {
                 writer.Write(v.Key ?? string.Empty);
@@ -147,12 +156,12 @@ namespace Inedo.BuildMasterExtensions.Windows.PowerShell
             else
                 exitCode = reader.ReadInt32();
 
-            int count = reader.ReadInt32();
+            int count = SlimBinaryFormatter.ReadLength(stream);
             var output = new List<string>(count);
             for (int i = 0; i < count; i++)
                 output.Add(reader.ReadString());
 
-            count = reader.ReadInt32();
+            count = SlimBinaryFormatter.ReadLength(stream);
             var vars = new Dictionary<string, string>(count, StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < count; i++)
             {
