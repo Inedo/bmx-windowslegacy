@@ -8,9 +8,9 @@ using Inedo.Diagnostics;
 
 namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
 {
-    [DisplayName("Start App Pool")]
-    [Description("Starts an application pool.")]
-    [ScriptAlias("Start-AppPool")]
+    [DisplayName("Stop App Pool")]
+    [Description("Stops an application pool.")]
+    [ScriptAlias("Stop-AppPool")]
     [SeeAlso(typeof(StartAppPoolOperation))]
     [ScriptNamespace("IIS")]
     [DefaultProperty(nameof(AppPool))]
