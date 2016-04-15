@@ -4,15 +4,14 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
-using Inedo.BuildMaster.Documentation;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.BuildMaster.Web;
 using Inedo.BuildMasterExtensions.Windows.PowerShell;
 using Inedo.Diagnostics;
+using Inedo.Documentation;
 using Inedo.ExecutionEngine;
 
 namespace Inedo.BuildMasterExtensions.Windows.Operations.PowerShell

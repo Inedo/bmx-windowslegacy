@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
-using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility.Scripting;
+using Inedo.Documentation;
 
 namespace Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell
 {

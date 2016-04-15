@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Inedo.BuildMaster;
 using Inedo.BuildMaster.Data;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Actions;
@@ -11,6 +10,7 @@ using Inedo.BuildMaster.Extensibility.Variables;
 using Inedo.BuildMaster.Web;
 using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 using Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell;
+using Inedo.Documentation;
 using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
