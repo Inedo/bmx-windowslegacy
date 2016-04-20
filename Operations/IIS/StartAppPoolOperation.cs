@@ -1,14 +1,15 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.BuildMasterExtensions.Windows.Iis;
 using Inedo.Diagnostics;
 using Inedo.Documentation;
-using Inedo.Serialization;
 
 namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
 {
+    [Serializable]
     [DisplayName("Start App Pool")]
     [Description("Starts an application pool.")]
     [ScriptAlias("Start-AppPool")]
@@ -18,7 +19,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
     public sealed class StartAppPoolOperation : RemoteExecuteOperation
     {
         [Required]
-        [SlimSerializable]
         [ScriptAlias("Name")]
         [Description("The name of the application pool to operate on.")]
         public string AppPool { get; set; }

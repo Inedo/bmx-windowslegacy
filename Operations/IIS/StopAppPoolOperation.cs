@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Operations;
@@ -8,6 +9,7 @@ using Inedo.Documentation;
 
 namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
 {
+    [Serializable]
     [DisplayName("Stop App Pool")]
     [Description("Stops an application pool.")]
     [ScriptAlias("Stop-AppPool")]
