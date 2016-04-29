@@ -19,6 +19,7 @@ Stop-Service HDARS;")]
     [ScriptNamespace("Windows", PreferUnqualified = true)]
     public sealed class StopServiceOperation : ExecuteOperation
     {
+        [Required]
         [ScriptAlias("Name")]
         public string ServiceName { get; set; }
         [ScriptAlias("WaitForStoppedStatus")]

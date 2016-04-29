@@ -19,6 +19,7 @@ Start-Service HDARS;")]
     [ScriptNamespace("Windows", PreferUnqualified = true)]
     public sealed class StartServiceOperation : ExecuteOperation
     {
+        [Required]
         [ScriptAlias("Name")]
         public string ServiceName { get; set; }
         [ScriptAlias("WaitForRunningStatus")]

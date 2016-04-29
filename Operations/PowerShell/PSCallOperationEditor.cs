@@ -121,7 +121,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.PowerShell
                 })
             };
         }
-        public override ActionStatement CreateActionStatement(object _model)
+        public override ActionStatement CreateActionStatement(QualifiedName name, object _model)
         {
             var model = (PSCallOperationModel)_model;
             return new ActionStatement("PSCall",
