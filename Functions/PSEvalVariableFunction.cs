@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using Inedo.Agents;
 using Inedo.BuildMaster.Extensibility;
-using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.BuildMaster.Extensibility.VariableFunctions;
 using Inedo.BuildMasterExtensions.Windows.PowerShell;

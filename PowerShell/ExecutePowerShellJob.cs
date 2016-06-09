@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Inedo.BuildMaster.Extensibility.Agents;
+using Inedo.Agents;
 using Inedo.Diagnostics;
 using Inedo.Serialization;
 

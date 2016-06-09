@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
+using Inedo.Agents;
 using Inedo.BuildMaster.Extensibility;
-using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Extensibility.Operations;
 using Inedo.BuildMasterExtensions.Windows.PowerShell;
 using Inedo.Diagnostics;

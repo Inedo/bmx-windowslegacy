@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using Inedo.Agents;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Extensibility.Agents;
 using Inedo.BuildMaster.Web;
 using Inedo.Documentation;
 using Inedo.Serialization;

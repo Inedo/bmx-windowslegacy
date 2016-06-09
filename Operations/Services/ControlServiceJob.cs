@@ -3,7 +3,7 @@ using System.IO;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
-using Inedo.BuildMaster.Extensibility.Agents;
+using Inedo.Agents;
 using Inedo.Diagnostics;
 
 namespace Inedo.BuildMasterExtensions.Windows.Operations.Services
