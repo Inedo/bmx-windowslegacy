@@ -23,7 +23,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
         [Description("The name of the application pool to operate on.")]
         public string AppPool { get; set; }
 
-        protected override async Task RemoteExecuteAsync(IRemoteOperationExecutionContext context)
+        protected override async Task<object> RemoteExecuteAsync(IRemoteOperationExecutionContext context)
         {
             bool started = false;
             this.LogDebug($"Starting application pool {this.AppPool}...");
@@ -40,6 +40,8 @@ namespace Inedo.BuildMasterExtensions.Windows.Operations.IIS
             await Task.Delay(100);
             if (started)
                 this.LogInformation(this.AppPool + " started.");
+
+            return null;
         }
 
         protected override ExtendedRichDescription GetDescription(IOperationConfiguration config)
