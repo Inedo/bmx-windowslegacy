@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Inedo.BuildMasterExtensions.Windows</RootNamespace>
-    <AssemblyName>Windows</AssemblyName>
+    <AssemblyName>WindowsLegacy</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -24,7 +24,7 @@
     <SccProvider>
     </SccProvider>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <PublishUrl>http://localhost/Windows/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -68,34 +68,31 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BuildMaster.Web.Controls, Version=5.1.0.7, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\BuildMaster.Web.Controls.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="BuildMaster.Web.Controls, Version=6.0.0.11, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.6.0.0\lib\net452\BuildMaster.Web.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="BuildMasterCore, Version=5.1.0.7, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\BuildMasterCore.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="BuildMasterCore, Version=6.0.0.11, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.BuildMaster.SDK.6.0.0\lib\net452\BuildMasterCore.dll</HintPath>
     </Reference>
-    <Reference Include="Inedo.Agents.Client">
-      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\Inedo.Agents.Client.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Inedo.Agents.Client, Version=1000.0.0.0, Culture=neutral, PublicKeyToken=9de986a2f8db80fc, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.SDK.1.0.4-pre0020\lib\net452\Inedo.Agents.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Inedo.ExecutionEngine, Version=33.1.0.0, Culture=neutral, PublicKeyToken=68703f0e52007e75, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\Inedo.ExecutionEngine.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Inedo.ExecutionEngine, Version=64.0.0.0, Culture=neutral, PublicKeyToken=68703f0e52007e75, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.SDK.1.0.4-pre0020\lib\net452\Inedo.ExecutionEngine.dll</HintPath>
     </Reference>
-    <Reference Include="InedoLib, Version=397.1.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
-      <HintPath>packages\Inedo.BuildMaster.SDK.5.1\lib\net45\InedoLib.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Inedo.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=29fae5dec3001603, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.SDK.1.0.4-pre0020\lib\net452\Inedo.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="InedoLib, Version=1000.0.0.0, Culture=neutral, PublicKeyToken=112cfb71329714a6, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.SDK.1.0.4-pre0020\lib\net452\InedoLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Administration, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Web.Administration.7.0.0.0\lib\net20\Microsoft.Web.Administration.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Inedo.SDK.1.0.4-pre0020\lib\net452\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -109,12 +106,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functions\PsEvalVariableFunction.cs" />
-    <Compile Include="Legacy\ActionImporters\PSExecuteImporter.cs" />
-    <Compile Include="Legacy\ActionImporters\StartAppPoolImporter.cs" />
-    <Compile Include="Legacy\ActionImporters\StartServiceImporter.cs" />
-    <Compile Include="Legacy\ActionImporters\StopAppPoolImporter.cs" />
-    <Compile Include="Legacy\ActionImporters\StopServiceImporter.cs" />
     <Compile Include="Legacy\IIS\CreateIisAppPoolAction.cs" />
     <Compile Include="Legacy\IIS\CreateIisAppPoolActionEditor.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -133,25 +124,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Legacy\IIS\StartupIisAppAction.cs" />
-    <Compile Include="Operations\IIS\StartAppPoolOperation.cs" />
-    <Compile Include="Operations\IIS\StopAppPoolOperation.cs" />
-    <Compile Include="Operations\PowerShell\PSCallOperation.cs" />
-    <Compile Include="Operations\PowerShell\PSCallOperationEditor.cs" />
-    <Compile Include="Operations\PowerShell\PSExecuteOperation.cs" />
-    <Compile Include="Operations\Services\ControlServiceJob.cs" />
-    <Compile Include="Operations\Services\StartServiceOperation.cs" />
-    <Compile Include="Operations\Services\StopServiceOperation.cs" />
-    <Compile Include="PowerShell\BuildMasterPSHost.cs" />
-    <Compile Include="PowerShell\BuildMasterPSHostRawUserInterface.cs" />
-    <Compile Include="PowerShell\BuildMasterPSHostUserInterface.cs" />
-    <Compile Include="PowerShell\ExecutePowerShellJob.cs" />
-    <Compile Include="PowerShell\PowerShellExtensions.cs" />
-    <Compile Include="PowerShell\PowerShellOutputEventArgs.cs" />
-    <Compile Include="PowerShell\PowerShellParameterInfo.cs" />
-    <Compile Include="PowerShell\PowerShellScriptInfo.cs" />
-    <Compile Include="PowerShell\PowerShellScriptInfo.Parse.cs" />
-    <Compile Include="PowerShell\PowerShellScriptRunner.cs" />
-    <Compile Include="PowerShell\ShouldExitEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Legacy\Scripting\PowerShell\BuildMasterPSHost.cs" />
     <Compile Include="Legacy\Scripting\PowerShell\BuildMasterPSHostRawUserInterface.cs" />
@@ -228,8 +200,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>if exist $(SolutionDir) cmd /c "del $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx"
-if exist $(SolutionDir) $(SolutionDir)..\zip -r $(SolutionDir)..\..\BuildMaster\ExtensionLib\$(TargetName).bmx *.*
-if exist $(TargetDir)Microsoft.Web.Administration.dll del $(TargetDir)Microsoft.Web.Administration.dll</PostBuildEvent>
+    <PostBuildEvent>powershell -Command "if (Test-Path C:\Projects\BuildMaster\Extensions -PathType Container) { Compress-Archive -Path '$(TargetDir)*' -DestinationPath C:\Projects\BuildMaster\Extensions\$(TargetName).zip -Force; Move-Item C:\Projects\BuildMaster\Extensions\$(TargetName).zip -Destination C:\Projects\BuildMaster\Extensions\$(TargetName).bmx -Force }"</PostBuildEvent>
   </PropertyGroup>
 </Project>

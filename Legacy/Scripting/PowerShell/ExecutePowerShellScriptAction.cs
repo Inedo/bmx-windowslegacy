@@ -7,11 +7,10 @@ using Inedo.BuildMaster.Extensibility;
 using Inedo.BuildMaster.Extensibility.Actions;
 using Inedo.BuildMaster.Extensibility.Actions.Scripting;
 using Inedo.BuildMaster.Extensibility.Variables;
-using Inedo.BuildMaster.Web;
-using Inedo.BuildMasterExtensions.Windows.ActionImporters;
 using Inedo.BuildMasterExtensions.Windows.Scripting.PowerShell;
 using Inedo.Documentation;
 using Inedo.Serialization;
+using Inedo.Web;
 
 namespace Inedo.BuildMasterExtensions.Windows.Shell
 {
@@ -19,7 +18,6 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     [Description("Runs a PowerShell script on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecutePowerShellScriptActionEditor))]
-    [ConvertibleToOperation(typeof(PSExecuteImporter))]
     public sealed class ExecutePowerShellScriptAction : ExecuteScriptActionBase<PowerShellScriptType>, IMissingPersistentPropertyHandler
     {
         void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IReadOnlyDictionary<string, string> missingProperties)
@@ -93,13 +91,13 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
                 .ToDictionary(p => p[0], p => p[1], StringComparer.OrdinalIgnoreCase);
         }
 
-        private IVariableEvaluationContext GetVariableEvaluationContext()
+        private ILegacyVariableEvaluationContext GetVariableEvaluationContext()
         {
             // StandardEvaluationContext should probably be moved to SDK.
             // For now create instance using reflection.
 
-            return (IVariableEvaluationContext)Activator.CreateInstance(
-                Type.GetType("Inedo.BuildMaster.Variables.StandardVariableEvaluationContext,BuildMaster", true),
+            return (ILegacyVariableEvaluationContext)Activator.CreateInstance(
+                Type.GetType("Inedo.BuildMaster.Variables.LegacyVariableEvaluationContext,BuildMaster", true),
                 (IGenericBuildMasterContext)this.Context,
                 this.Context.Variables
             );

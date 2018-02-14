@@ -1,8 +1,8 @@
 ﻿using System.Web.UI.WebControls;
 using Inedo.BuildMaster;
 using Inedo.BuildMaster.Extensibility.Actions;
-using Inedo.BuildMaster.Web.Controls;
 using Inedo.BuildMaster.Web.Controls.Extensions;
+using Inedo.Web;
 using Inedo.Web.Controls;
 using Inedo.Web.Controls.SimpleHtml;
 
@@ -10,7 +10,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 {
     internal sealed class InstallServiceActionEditor : ActionEditorBase
     {
-        private SourceControlFileFolderPicker txtExePath;
+        private FileBrowserTextBox txtExePath;
         private ValidatingTextBox txtArguments;
         private ValidatingTextBox txtServiceName;
         private ValidatingTextBox txtDisplayName;
@@ -51,9 +51,10 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
 
         protected override void CreateChildControls()
         {
-            this.txtExePath = new SourceControlFileFolderPicker
+            this.txtExePath = new FileBrowserTextBox
             {
                 Required = true,
+                IncludeFiles = true,
                 DefaultText = @"ex: C:\Program Files\Example\MyExampleService.exe"
             };
 
