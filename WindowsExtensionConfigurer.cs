@@ -7,6 +7,7 @@ using Inedo.Web;
 namespace Inedo.BuildMasterExtensions.Windows
 {
     [CustomEditor(typeof(WindowsExtensionConfigurerEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.WindowsExtensionConfigurer,Windows")]
     public sealed class WindowsExtensionConfigurer : ExtensionConfigurerBase
     {
         [Persistent]

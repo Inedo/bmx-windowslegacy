@@ -13,6 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     [Description("Runs a script using cscript.exe on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecuteCScriptActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Shell.ExecuteCScriptAction,Windows")]
     public sealed class ExecuteCScriptAction : AgentBasedActionBase
     {
         [Persistent]

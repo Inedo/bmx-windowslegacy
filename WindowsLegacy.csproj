@@ -133,7 +133,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

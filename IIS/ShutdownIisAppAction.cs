@@ -13,6 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     [Tag("windows")]
     [Tag("iis")]
     [CustomEditor(typeof(StartStopIISAppActionEditor<ShutdownIisAppAction>))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Iis.ShutdownIisAppAction,Windows")]
     public sealed class ShutdownIisAppAction : RemoteActionBase, IIISAppPoolAction
     {
         [Persistent]

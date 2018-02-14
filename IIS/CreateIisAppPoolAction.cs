@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     [Tag(Tags.Windows)]
     [Tag("iis")]
     [CustomEditor(typeof(CreateIisAppPoolActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Iis.CreateIisAppPoolAction,Windows")]
     public sealed class CreateIisAppPoolAction : RemoteActionBase
     {
         /// <summary>

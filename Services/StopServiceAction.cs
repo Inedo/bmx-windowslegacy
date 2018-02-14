@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     [Description("Stops a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StopServiceActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Services.StopServiceAction,Windows")]
     public sealed class StopServiceAction : RemoteActionBase
     {
         [Persistent]

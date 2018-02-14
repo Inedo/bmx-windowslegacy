@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     [Description("Starts a Windows Service.")]
     [Tag("windows")]
     [CustomEditor(typeof(StartServiceActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Services.StartServiceAction,Windows")]
     public sealed class StartServiceAction : RemoteActionBase
     {
         [Persistent]

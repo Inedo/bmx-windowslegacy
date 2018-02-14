@@ -13,6 +13,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     [Description("Uninstalls a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(UninstallServiceActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Services.UninstallServiceAction,Windows")]
     public sealed class UninstallServiceAction : RemoteActionBase
     {
         [Persistent]

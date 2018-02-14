@@ -18,6 +18,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Shell
     [Description("Runs a PowerShell script on the target server.")]
     [Tag("windows")]
     [CustomEditor(typeof(ExecutePowerShellScriptActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Shell.ExecutePowerShellScriptAction,Windows")]
     public sealed class ExecutePowerShellScriptAction : ExecuteScriptActionBase<PowerShellScriptType>, IMissingPersistentPropertyHandler
     {
         void IMissingPersistentPropertyHandler.OnDeserializedMissingProperties(IReadOnlyDictionary<string, string> missingProperties)

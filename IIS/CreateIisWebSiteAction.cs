@@ -12,6 +12,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Iis
     [Tag(Tags.Windows)]
     [Tag("iis")]
     [CustomEditor(typeof(CreateIisWebSiteActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Iis.CreateIisWebSiteAction,Windows")]
     public sealed class CreateIisWebSiteAction : RemoteActionBase
     {
         /// <summary>

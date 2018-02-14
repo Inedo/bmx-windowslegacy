@@ -14,6 +14,7 @@ namespace Inedo.BuildMasterExtensions.Windows.Services
     [Description("Installs a Windows service.")]
     [Tag("windows")]
     [CustomEditor(typeof(InstallServiceActionEditor))]
+    [PersistFrom("Inedo.BuildMasterExtensions.Windows.Services.InstallServiceAction,Windows")]
     public sealed class InstallServiceAction : RemoteActionBase
     {
         [Persistent]
